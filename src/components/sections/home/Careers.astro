@@ -1,0 +1,208 @@
+---
+import { Image } from 'astro:assets';
+import Icon from '@components/ui/Icon.astro';
+import Button from '@components/ui/Button.astro';
+import Monogram from '@components/ui/Monogram.astro';
+import bartender from '@assets/images/careers-bartender.jpg';
+import { jobs } from '@data/jobs';
+import { site } from '@data/site';
+---
+
+<section class="careers theme-paper section" aria-labelledby="careers-title" id="careers">
+  <div class="container">
+    <div class="careers__head">
+      <h2 id="careers-title" class="t-display-s" data-reveal="lines">
+        Join the crew
+      </h2>
+      <div class="careers__intro t-accent-m" data-reveal="fade-up">
+        <p>Pour, plate, host, hustle. Grow with us.</p>
+        <p>
+          We are a loud, loyal team that takes hospitality seriously and ourselves a little less. Fair
+          schedules, staff meals that are actually good, and real room to grow.
+        </p>
+      </div>
+    </div>
+
+    <div class="careers__grid">
+      <div class="careers__media">
+        <div class="careers__badge">
+          <Monogram size="clamp(6rem, 4rem + 4vw, 9rem)" />
+        </div>
+        <div class="careers__photo" data-reveal="image">
+          <Image
+            src={bartender}
+            alt="A smiling bartender shaking a cocktail behind the bar"
+            widths={[480, 760, 1100]}
+            sizes="(max-width: 1000px) 90vw, 40vw"
+            loading="lazy"
+            decoding="async"
+            data-parallax="5"
+            data-parallax-zoom
+          />
+        </div>
+      </div>
+
+      <div class="careers__jobs">
+        <p class="t-label-s careers__kicker">Open positions</p>
+        <ul class="accordion" role="list" data-module="accordion" data-single>
+          {jobs.map((job, i) => (
+            <li class="accordion__item" data-accordion-item>
+              <h3 class="accordion__heading">
+                <button
+                  class="accordion__trigger t-headline-s"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls={`job-${i}`}
+                  id={`job-${i}-label`}
+                  data-accordion-trigger
+                >
+                  <span>{job.title}</span>
+                  <Icon name="chevron-down" size={20} class="accordion__chevron" />
+                </button>
+              </h3>
+              <div
+                class="accordion__panel"
+                id={`job-${i}`}
+                role="region"
+                aria-labelledby={`job-${i}-label`}
+                hidden
+              >
+                <div class="accordion__body">
+                  <p class="t-label-s">{job.type}</p>
+                  <p class="t-body-m">{job.summary}</p>
+                  <ul class="accordion__list t-body-s">
+                    {job.duties.map((d) => (
+                      <li>{d}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="careers__cta">
+          <Button href={`mailto:${site.email}?subject=Job%20application`} tone="brand">
+            Apply now
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .careers__head {
+    display: grid;
+    gap: 2rem;
+    max-width: 38rem;
+    margin-bottom: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .careers__intro {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .careers__grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 4rem;
+    align-items: start;
+  }
+
+  .careers__media {
+    grid-column: 1 / 6;
+    position: relative;
+    padding-top: 3rem;
+  }
+
+  .careers__badge {
+    position: absolute;
+    top: 0;
+    left: 10%;
+    z-index: 2;
+  }
+
+  .careers__photo {
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+  .careers__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .careers__jobs {
+    grid-column: 7 / 13;
+  }
+
+  .careers__kicker {
+    padding-bottom: 1rem;
+  }
+
+  .accordion {
+    border-bottom: 1px solid var(--c-plum);
+  }
+
+  .accordion__item {
+    border-top: 1px solid var(--c-plum);
+  }
+
+  .accordion__heading {
+    margin: 0;
+  }
+
+  .accordion__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.35rem;
+    text-align: left;
+    transition: padding var(--dur-m) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .accordion__trigger:hover {
+      padding-left: 0.6rem;
+    }
+  }
+
+  .accordion__trigger :global(.accordion__chevron) {
+    transition: transform var(--dur-m) var(--ease-out);
+  }
+  .accordion__trigger[aria-expanded='true'] :global(.accordion__chevron) {
+    transform: rotate(180deg);
+  }
+
+  .accordion__panel {
+    overflow: hidden;
+  }
+
+  .accordion__body {
+    display: grid;
+    gap: 0.8rem;
+    padding-bottom: 1.6rem;
+    max-width: 34rem;
+  }
+
+  .accordion__list {
+    display: grid;
+    gap: 0.35rem;
+    padding-left: 1.1rem;
+  }
+
+  .careers__cta {
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 1000px) {
+    .careers__media,
+    .careers__jobs {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

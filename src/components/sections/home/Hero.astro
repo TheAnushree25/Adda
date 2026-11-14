@@ -1,0 +1,199 @@
+---
+import { Image } from 'astro:assets';
+import heroImage from '@assets/images/hero-table.jpg';
+import lettering from '@data/lettering.json';
+import { site } from '@data/site';
+import { blob } from '@lib/shapes';
+
+/**
+ * The headline is pre-built SVG lettering (see scripts/build-lettering.mjs):
+ * one path per letter, grouped by line, so each letter can travel along its own
+ * motion path on entry and then stay perfectly still.
+ */
+const headline = 'Pull up a chair, stay awhile';
+const [, , vbW, vbH] = lettering.viewBox;
+const ratio = (vbW / vbH).toFixed(4);
+
+// Organic clip for the no-WebGL fallback (0–100 box scaled to the element).
+const fallbackClip = blob({ seed: 8, cx: 66, cy: 46, r: 48, points: 8, wobble: 0.42, stretch: [1.05, 1.1] });
+---
+
+<section class="hero theme-plum" data-module="hero" aria-labelledby="hero-title">
+  <div class="hero__media" aria-hidden="true">
+    <svg class="hero__defs" width="0" height="0" focusable="false">
+      <clipPath id="hero-fallback-clip" clipPathUnits="objectBoundingBox">
+        <path transform="scale(0.01)" d={fallbackClip}></path>
+      </clipPath>
+    </svg>
+    <Image
+      src={heroImage}
+      alt=""
+      widths={[828, 1280, 1920, 2400]}
+      sizes="100vw"
+      quality={82}
+      loading="eager"
+      fetchpriority="high"
+      class="hero__fallback"
+      data-hero-image
+    />
+    <canvas class="hero__canvas" data-hero-canvas></canvas>
+  </div>
+
+  <div class="hero__content container">
+    <h1 id="hero-title" class="hero__title">
+      <span class="u-sr-only">{headline}</span>
+      <svg
+        class="hero__lettering"
+        viewBox={lettering.viewBox.join(' ')}
+        preserveAspectRatio="xMinYMin meet"
+        style={`--ratio:${ratio}`}
+        aria-hidden="true"
+        focusable="false"
+        data-hero-lettering
+        data-em={lettering.em}
+      >
+        {lettering.lines.map((line) => (
+          <g data-hero-line>
+            {line.letters.map((l) => (
+              <path d={l.d} data-hero-letter />
+            ))}
+          </g>
+        ))}
+      </svg>
+    </h1>
+
+    <div class="hero__copy" data-hero-copy>
+      <p class="t-label-l" data-hero-fade>
+        {site.name} · Café &amp; bistro since {site.since}
+      </p>
+      <p class="t-body-m hero__lead" data-hero-fade>
+        On the corner of {site.address.street}, slow coffee, generous plates and long, lively evenings in a
+        room that hums from breakfast to last call.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* The whole hero fits one screen. */
+  .hero {
+    --hero-top: clamp(0.75rem, 3.2svh, 3rem);
+    --hero-bottom: clamp(5.5rem, 13svh, 8.5rem);
+    --hero-copy: 8.5rem;
+
+    position: relative;
+    height: 100svh;
+    min-height: 34rem;
+    isolation: isolate;
+    overflow: clip;
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .hero__defs {
+    position: absolute;
+  }
+
+  .hero__fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    clip-path: url(#hero-fallback-clip);
+    transition: opacity 0.8s var(--ease-out);
+  }
+
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s var(--ease-out);
+  }
+
+  .hero:global(.is-gl) .hero__canvas {
+    opacity: 1;
+  }
+  .hero:global(.is-gl) .hero__fallback {
+    opacity: 0;
+  }
+
+  .hero__content {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: calc(var(--header-h) + var(--hero-top));
+    padding-bottom: var(--hero-bottom);
+    pointer-events: none;
+  }
+
+  .hero__title {
+    margin: 0;
+    line-height: 0;
+  }
+
+  /* Width follows whichever runs out first: the column or the screen height. */
+  .hero__lettering {
+    display: block;
+    width: min(
+      52vw,
+      calc(
+        (100svh - var(--header-h) - var(--hero-top) - var(--hero-bottom) - var(--hero-copy)) * var(--ratio)
+      )
+    );
+    min-width: 15rem;
+    height: auto;
+    aspect-ratio: var(--ratio);
+    overflow: visible;
+    fill: currentColor;
+  }
+
+  /* Hidden only until the intro plays (never without JS or with reduced motion). */
+  :global(.js:not(.reduced-motion)) .hero:not(:global(.is-ready)) [data-hero-letter],
+  :global(.js:not(.reduced-motion)) .hero:not(:global(.is-ready)) [data-hero-fade] {
+    opacity: 0;
+  }
+
+  .hero__copy {
+    margin-top: clamp(1.25rem, 3svh, 2.5rem);
+    max-width: 33rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .hero__lead {
+    font-size: 1.0625rem;
+  }
+
+  @media (max-width: 1000px) {
+    .hero {
+      --hero-copy: 11rem;
+    }
+    .hero__lettering {
+      width: min(
+        88vw,
+        calc(
+          (100svh - var(--header-h) - var(--hero-top) - var(--hero-bottom) - var(--hero-copy)) * var(--ratio)
+        )
+      );
+    }
+  }
+
+  @media (max-height: 640px) {
+    .hero {
+      --hero-copy: 6.5rem;
+    }
+    .hero__lead {
+      display: none;
+    }
+  }
+</style>

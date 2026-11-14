@@ -1,0 +1,321 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Button from '@components/ui/Button.astro';
+import Icon, { type IconName } from '@components/ui/Icon.astro';
+import BrushBand from '@components/ui/BrushBand.astro';
+import StatBubbles from '@components/sections/shared/StatBubbles.astro';
+import VisitCta from '@components/sections/home/VisitCta.astro';
+import { moods } from '@data/rooms';
+import { site } from '@data/site';
+import toast from '@assets/images/about-toast.jpg';
+import { url } from '@lib/paths';
+
+const values: { title: string; text: string; icon: IconName }[] = [
+  {
+    title: 'Quality',
+    text: 'Fresh ingredients, prepped every morning and cooked to order — never shortcuts.',
+    icon: 'sparkle',
+  },
+  {
+    title: 'Community',
+    text: 'Our regulars, our neighbours, our suppliers down the road. We grow together.',
+    icon: 'heart',
+  },
+  {
+    title: 'Seasonality',
+    text: 'The menu follows the market. When the tomatoes are perfect, you will know.',
+    icon: 'leaf',
+  },
+  {
+    title: 'Hospitality',
+    text: 'A warm hello, a table that feels like yours and the time to enjoy it.',
+    icon: 'flame',
+  },
+];
+---
+
+<BaseLayout
+  title="The Café"
+  description={`The story of ${site.name}: a neighbourhood café, bistro and bar since ${site.since}.`}
+  headerTheme="deep"
+  page="about"
+>
+  <section class="about-hero theme-deep" aria-labelledby="about-title">
+    <div class="about-hero__copy container">
+      <Eyebrow centered>Café · Bistro · Bar</Eyebrow>
+      <h1 id="about-title" class="t-display-m" data-reveal="lines">
+        A neighbourhood classic since {site.since}!
+      </h1>
+    </div>
+    <div class="about-hero__stage">
+      <BrushBand
+        class="about-hero__band"
+        base="var(--c-deep)"
+        light="var(--c-mauve)"
+        dark="var(--c-plum)"
+        seed={9}
+      />
+      <div class="about-hero__arch arch" data-reveal="image">
+        <Image
+          src={toast}
+          alt="Friends raising glasses of red wine over shared plates"
+          widths={[480, 760, 1100]}
+          sizes="(max-width: 700px) 80vw, 34rem"
+          loading="eager"
+          data-parallax="6"
+          data-parallax-zoom
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="about-statement theme-paper section" aria-label="Our mission">
+    <div class="container about-statement__inner">
+      <Eyebrow centered>Our promise</Eyebrow>
+      <p class="t-headline-l" data-reveal="lines">
+        A varied menu and a warm room, with one simple goal in mind: giving you a genuinely good time, every
+        time.
+      </p>
+      <div data-reveal="fade-up">
+        <Button href={url('/#careers')} tone="brand">
+          Join the crew
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="theme-paper section section--clip about-stats" aria-label="Mirabelle in numbers">
+    <div class="container">
+      <StatBubbles />
+    </div>
+  </section>
+
+  <section class="moods theme-mauve section" aria-labelledby="moods-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="moods-title" class="t-display-s section-head__title" data-reveal="lines">
+          Three moods, one address
+        </h2>
+        <p class="t-label-s section-head__aside moods__hint">
+          <Icon name="arrow-left" size={14} /> Drag to explore <Icon name="arrow-right" size={14} />
+        </p>
+      </div>
+
+      <div class="moods__carousel" data-module="carousel" data-free>
+        <div class="moods__viewport" data-carousel-viewport>
+          <ul class="moods__track" role="list">
+            {moods.map((m) => (
+              <li class="moods__slide">
+                <figure class="mood">
+                  <div class="mood__media">
+                    <Image
+                      src={m.image}
+                      alt={m.alt}
+                      widths={[640, 960, 1400]}
+                      sizes="(max-width: 700px) 85vw, 52vw"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <figcaption class="mood__caption">
+                    <span class="t-label-m">{m.name}</span>
+                    <span class="t-body-s">{m.text}</span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+          <span class="drag-cursor t-label-s" data-carousel-cursor aria-hidden="true">
+            Drag
+          </span>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-controls__btn" type="button" data-carousel-prev aria-label="Previous room">
+            <Icon name="arrow-left" size={18} />
+          </button>
+          <button class="carousel-controls__btn" type="button" data-carousel-next aria-label="Next room">
+            <Icon name="arrow-right" size={18} />
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="values theme-paper section" aria-labelledby="values-title">
+    <div class="container">
+      <h2 id="values-title" class="t-display-s values__title" data-reveal="lines">
+        What we stand for, every single day
+      </h2>
+      <ul class="values__grid" role="list" data-reveal="stagger">
+        {values.map((v) => (
+          <li class="value" data-reveal-child>
+            <h3 class="t-headline-m">{v.title}</h3>
+            <p class="t-body-s">{v.text}</p>
+            <Icon name={v.icon} size={64} class="value__icon" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <VisitCta />
+</BaseLayout>
+
+<style>
+  .about-hero {
+    position: relative;
+    padding-top: calc(var(--header-h) + clamp(2rem, 1rem + 3vw, 4rem));
+    overflow: clip;
+  }
+
+  .about-hero__copy {
+    display: grid;
+    justify-items: center;
+    gap: 1.6rem;
+    text-align: center;
+  }
+
+  .about-hero__copy h1 {
+    max-width: 14ch;
+  }
+
+  .about-hero__stage {
+    position: relative;
+    margin-top: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    display: grid;
+    justify-items: center;
+  }
+
+  .about-hero :global(.about-hero__band) {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 62%;
+  }
+
+  .about-hero__arch {
+    position: relative;
+    width: min(34rem, 80vw);
+    aspect-ratio: 4 / 5;
+  }
+
+  .about-statement__inner {
+    display: grid;
+    justify-items: center;
+    gap: 2rem;
+    text-align: center;
+    max-width: 62rem;
+  }
+
+  .about-stats {
+    padding-top: 0;
+  }
+
+  .moods .section-head {
+    margin-bottom: 3rem;
+  }
+
+  .moods__hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    justify-self: end;
+  }
+
+  .moods__viewport {
+    position: relative;
+    overflow: hidden;
+    margin-right: calc(var(--container-pad) * -1);
+    cursor: grab;
+  }
+
+  .moods__track {
+    display: flex;
+    gap: var(--gutter);
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .moods__slide {
+    flex: 0 0 min(52vw, 46rem);
+    min-width: 0;
+  }
+
+  .mood__media {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .mood__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .mood__caption {
+    display: grid;
+    gap: 0.5rem;
+    max-width: 30rem;
+    padding-top: 1.25rem;
+  }
+
+  .values__title {
+    max-width: 18ch;
+    margin: 0 0 clamp(2.5rem, 2rem + 3vw, 4.5rem) auto;
+    text-align: right;
+  }
+
+  .values__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--gutter);
+  }
+
+  .value {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    min-height: 22rem;
+    padding: 2rem 1.75rem;
+    border: 1px solid var(--c-plum);
+    overflow: hidden;
+  }
+
+  .value :global(.value__icon) {
+    position: absolute;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    transition: transform 0.8s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .value:hover :global(.value__icon) {
+      transform: rotate(-12deg) scale(1.15);
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .values__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .moods__slide {
+      flex-basis: 80vw;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .values__grid {
+      grid-template-columns: 1fr;
+    }
+    .value {
+      min-height: 15rem;
+    }
+    .values__title {
+      text-align: left;
+      margin-left: 0;
+    }
+  }
+</style>

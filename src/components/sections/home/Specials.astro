@@ -1,0 +1,146 @@
+---
+import { Image } from 'astro:assets';
+import CurvedTitle from '@components/ui/CurvedTitle.astro';
+import { specials } from '@data/specials';
+---
+
+<section
+  class="specials"
+  data-module="specials"
+  aria-label="Daily rituals"
+  style={`--specials-bg:${specials[0]?.color}`}
+>
+  <div class="specials__frame">
+    <CurvedTitle text="Daily rituals" class="specials__title" width="30rem" bend={64} />
+    <div class="specials__track" data-specials-track>
+      {specials.map((s, i) => (
+        <article class="special" data-special data-color={s.color}>
+          <div class="special__ring">
+            <div class="special__plate" data-special-plate>
+              <Image
+                src={s.image}
+                alt={s.alt}
+                widths={[360, 560, 760]}
+                sizes="(max-width: 700px) 60vw, 24vw"
+                class="special__img"
+                loading={i < 3 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </div>
+          </div>
+          <div class="special__copy" data-special-copy>
+            <h3 class="t-headline-l special__name">{s.title}</h3>
+            <p class="t-accent-m">{s.tagline}</p>
+            <p class="t-body-s special__detail">{s.detail}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .specials {
+    position: relative;
+    background-color: var(--specials-bg);
+    color: var(--c-paper);
+    overflow: clip;
+  }
+
+  .specials__frame {
+    position: relative;
+    height: 100svh;
+    min-height: 40rem;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    /* The track is wider than the screen: keep it from stretching the column. */
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: clamp(4rem, 3rem + 3vw, 6.5rem);
+  }
+
+  .specials :global(.specials__title) {
+    position: relative;
+    z-index: 2;
+    margin-bottom: -3.5rem;
+  }
+
+  .specials__track {
+    display: flex;
+    align-items: center;
+    gap: clamp(2rem, 1rem + 4vw, 6rem);
+    padding-inline: calc(50vw - clamp(10rem, 6rem + 10vw, 14rem));
+    width: max-content;
+    justify-self: start;
+    will-change: transform;
+  }
+
+  .special {
+    width: clamp(18rem, 12rem + 16vw, 26rem);
+    display: grid;
+    justify-items: center;
+    gap: 2.2rem;
+    text-align: center;
+  }
+
+  .special__ring {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--c-paper);
+    padding: 11%;
+    box-shadow: 0 30px 60px -40px rgb(29 20 19 / 0.6);
+  }
+
+  .special__plate {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .special__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.04);
+  }
+
+  .special__copy {
+    display: grid;
+    gap: 0.55rem;
+    max-width: 22rem;
+  }
+
+  .special__detail {
+    margin-top: 0.25rem;
+  }
+
+  /* Reduced motion: a plain horizontal scroller. */
+  .specials:global(.is-static) .specials__frame {
+    height: auto;
+    padding-bottom: 4rem;
+  }
+  .specials:global(.is-static) .specials__track {
+    width: auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-inline: var(--container-pad);
+    padding-block: 5rem 2rem;
+  }
+  .specials:global(.is-static) .special {
+    flex: none;
+    scroll-snap-align: center;
+  }
+
+  @media (max-width: 700px) {
+    .specials__frame {
+      padding-top: 6rem;
+    }
+    .special {
+      width: 72vw;
+    }
+    .specials__track {
+      padding-inline: 14vw;
+    }
+  }
+</style>

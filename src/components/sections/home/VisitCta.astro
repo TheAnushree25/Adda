@@ -1,0 +1,61 @@
+---
+import Button from '@components/ui/Button.astro';
+import { site } from '@data/site';
+---
+
+<section class="visit theme-paper section" aria-labelledby="visit-title">
+  <div class="container visit__inner">
+    <div class="visit__main">
+      <h2 id="visit-title" class="t-display-s" data-reveal="lines">
+        What are you waiting for?
+      </h2>
+      <div class="visit__actions" data-reveal="fade-up" data-reveal-delay="0.1">
+        <Button tone="brand" data-sheet-open="sheet-book" aria-controls="sheet-book" aria-expanded="false">
+          Book a table
+        </Button>
+        <Button href={site.phone.href} variant="text">
+          {site.phone.display}
+        </Button>
+      </div>
+    </div>
+    <p class="t-accent-m visit__aside" data-reveal="fade-up">
+      Coffee at seven, dinner at nine, one more song at midnight. Whenever you come, we’ll keep a seat warm
+      for you.
+    </p>
+  </div>
+</section>
+
+<style>
+  .visit__inner {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 2rem;
+    align-items: start;
+  }
+
+  .visit__main {
+    grid-column: 1 / 7;
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .visit__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2rem;
+  }
+
+  .visit__aside {
+    grid-column: 8 / 13;
+    padding-top: 0.5rem;
+  }
+
+  @media (max-width: 1000px) {
+    .visit__main,
+    .visit__aside {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

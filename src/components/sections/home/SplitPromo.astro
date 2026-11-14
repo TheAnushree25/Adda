@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import CurvedTitle from '@components/ui/CurvedTitle.astro';
+import Button from '@components/ui/Button.astro';
+import GiftCards from '@components/ui/GiftCards.astro';
+import takeaway from '@assets/images/takeaway.jpg';
+import { site } from '@data/site';
+---
+
+<section class="split" aria-label="Takeaway and gift cards">
+  <div class="split__half theme-plum" id="order">
+    <CurvedTitle text="Takeaway & delivery" as="h2" width="30rem" bend={58} />
+    <div class="split__disc split__disc--photo" data-reveal="pop">
+      <Image
+        src={takeaway}
+        alt="Burgers and fries in takeaway boxes passed across a wooden table"
+        widths={[360, 560]}
+        sizes="20rem"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <Button href={site.orderUrl} tone="light">
+      Order online
+    </Button>
+  </div>
+
+  <div class="split__half theme-mauve" id="gift-cards">
+    <CurvedTitle text="Share the love" as="h2" width="26rem" bend={58} />
+    <div class="split__disc split__disc--cards" data-reveal="pop" data-reveal-delay="0.1">
+      <div class="split__cards" data-parallax="-8" data-parallax-rotate="10">
+        <GiftCards />
+      </div>
+    </div>
+    <Button href={site.giftUrl} tone="light">
+      Buy a gift card
+    </Button>
+  </div>
+</section>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .split__half {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 2.5rem;
+    padding: clamp(4rem, 3rem + 4vw, 7rem) var(--container-pad) clamp(5rem, 4rem + 4vw, 8rem);
+    text-align: center;
+  }
+
+  .split__disc {
+    width: clamp(14rem, 10rem + 10vw, 21rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-top: -1.5rem;
+  }
+
+  .split__disc--photo {
+    overflow: hidden;
+    box-shadow: 0 0 0 1rem var(--c-deep);
+  }
+  .split__disc--photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .split__disc--cards {
+    background: var(--c-plum);
+  }
+
+  .split__cards {
+    width: 92%;
+    margin-left: 6%;
+  }
+
+  @media (max-width: 1000px) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

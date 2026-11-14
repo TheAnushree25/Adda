@@ -1,0 +1,47 @@
+---
+/** Display title set along an upward arc (SVG textPath). */
+interface Props {
+  text: string;
+  as?: 'h2' | 'h3' | 'p';
+  class?: string;
+  width?: string;
+  /** Arc depth: higher = more curved. */
+  bend?: number;
+}
+
+const { text, as: Tag = 'h2', class: className, width = '34rem', bend = 70 } = Astro.props;
+const id = `arc-${Math.random().toString(36).slice(2, 8)}`;
+const d = `M 20 ${30 + bend} Q 300 ${30 - bend * 0.6} 580 ${30 + bend}`;
+---
+
+<Tag class:list={['curved', className]} style={`--w:${width}`}>
+  <span class="u-sr-only">{text}</span>
+  <svg viewBox={`0 0 600 ${60 + bend}`} class="curved__svg" aria-hidden="true" data-module="curved-text">
+    <path id={id} d={d} fill="none"></path>
+    <text class="curved__text" text-anchor="middle">
+      <textPath href={`#${id}`} startOffset="50%">
+        {text}
+      </textPath>
+    </text>
+  </svg>
+</Tag>
+
+<style>
+  .curved {
+    width: min(var(--w), 100%);
+    margin-inline: auto;
+  }
+  .curved__svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .curved__text {
+    fill: currentColor;
+    font-family: var(--f-display);
+    font-weight: 560;
+    font-variation-settings: var(--display-axes);
+    font-size: 64px;
+    letter-spacing: -0.01em;
+  }
+</style>

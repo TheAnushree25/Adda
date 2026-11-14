@@ -1,0 +1,324 @@
+---
+import { site, navLeft, navRight, bannerMessages } from '@data/site';
+import Logo from '@components/ui/Logo.astro';
+import Icon from '@components/ui/Icon.astro';
+import { url } from '@lib/paths';
+---
+
+<header class="site-header" data-module="header" data-theme="tomato">
+  <div class="site-header__banner container" data-intro-header>
+    <div class="site-header__banner-row">
+      <div class="site-header__messages" aria-live="off">
+        {bannerMessages.map((m, i) => (
+          <p
+            class="site-header__message t-label-s"
+            data-header-message
+            aria-hidden={i > 0 ? 'true' : undefined}
+          >
+            <Icon name="sparkle" size={14} />
+            <span class="site-header__message-title">{m.title}</span>
+            <span class="site-header__dot" aria-hidden="true" />
+            <span>{m.detail}</span>
+          </p>
+        ))}
+      </div>
+      <p class="site-header__status t-label-s" data-module="open-status" aria-live="polite">
+        &nbsp;
+      </p>
+    </div>
+    <span class="double-rule" aria-hidden="true"></span>
+  </div>
+
+  <div class="site-header__inner container">
+    <nav class="site-header__nav site-header__nav--left" aria-label="Primary">
+      {navLeft.map((l) => (
+        <a class="site-header__link t-label-m" href={l.href} data-nav-link data-intro-header>
+          <span>{l.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <a class="site-header__logo" href={url('/')} aria-label={`${site.name} — home`} data-intro-header>
+      <Logo />
+    </a>
+
+    <nav class="site-header__nav site-header__nav--right" aria-label="Secondary">
+      {navRight.map((l) => (
+        <a class="site-header__link t-label-m" href={l.href} data-nav-link data-intro-header>
+          <span>{l.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <button
+      class="burger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Open menu"
+      data-module="burger"
+      data-intro-header
+    >
+      <span class="burger__bar"></span>
+      <span class="burger__bar"></span>
+      <span class="burger__bar"></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    --fg: var(--c-paper);
+    --bg: var(--c-plum);
+
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: var(--z-header);
+    color: var(--fg);
+    transition:
+      transform 0.6s var(--ease-out),
+      color var(--dur-m) var(--ease-out);
+    pointer-events: none;
+  }
+
+  .site-header[data-theme='paper'] {
+    --fg: var(--c-plum);
+    --bg: var(--c-paper);
+  }
+  .site-header[data-theme='deep'] {
+    --bg: var(--c-deep);
+  }
+
+  .site-header > * {
+    pointer-events: auto;
+  }
+
+  /* Solid background once we've scrolled. */
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    opacity: 0;
+    transition: opacity var(--dur-m) var(--ease-out);
+    pointer-events: none;
+  }
+
+  .site-header.is-compact {
+    transform: translateY(calc(var(--header-banner-h) * -1));
+  }
+  .site-header.is-compact::before {
+    opacity: 1;
+  }
+  .site-header.is-hidden {
+    transform: translateY(-101%);
+  }
+
+  :global(html.menu-open) .site-header {
+    --fg: var(--c-paper);
+    transform: none;
+  }
+  :global(html.menu-open) .site-header::before {
+    opacity: 0;
+  }
+
+  /* Banner --------------------------------------------------------------- */
+  .site-header__banner {
+    position: relative;
+    height: var(--header-banner-h);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .site-header__banner-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .site-header__messages {
+    position: relative;
+    flex: 1;
+    height: 1.2rem;
+    overflow: hidden;
+  }
+
+  .site-header__message {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+
+  .site-header__message-title {
+    font-weight: 800;
+  }
+
+  .site-header__dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .site-header__status {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .site-header__status::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.4;
+  }
+  .site-header__status:global(.is-open)::before {
+    opacity: 1;
+    animation: pulse 2s var(--ease-smooth) infinite;
+  }
+
+  @keyframes pulse {
+    50% {
+      transform: scale(1.6);
+      opacity: 0.4;
+    }
+  }
+
+  .double-rule {
+    display: block;
+    height: 4px;
+    border-block: 1px solid currentColor;
+    margin-top: 0.55rem;
+  }
+
+  /* Main row -------------------------------------------------------------- */
+  .site-header__inner {
+    position: relative;
+    height: var(--header-inner-h);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .site-header__nav {
+    display: flex;
+    align-items: center;
+    gap: 2.25rem;
+  }
+  .site-header__nav--left {
+    justify-content: flex-end;
+  }
+  .site-header__nav--right {
+    justify-content: flex-start;
+  }
+
+  .site-header__logo {
+    display: block;
+    padding-inline: 2rem;
+    transition: transform var(--dur-l) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .site-header__logo:hover {
+      transform: rotate(-4deg) scale(1.04);
+    }
+  }
+
+  .site-header__link {
+    position: relative;
+    display: inline-block;
+    padding-block: 0.4rem;
+  }
+  .site-header__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path var(--dur-m) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .site-header__link:hover::after {
+      clip-path: inset(0);
+    }
+  }
+  .site-header__link[aria-current='page']::after {
+    clip-path: inset(0);
+  }
+
+  /* Burger -------------------------------------------------------------- */
+  .burger {
+    display: none;
+    position: relative;
+    width: 2.75rem;
+    height: 2.75rem;
+    justify-self: end;
+    color: inherit;
+  }
+  .burger__bar {
+    position: absolute;
+    left: 0.6rem;
+    right: 0.6rem;
+    height: 1.5px;
+    background: currentColor;
+    transition:
+      transform var(--dur-m) var(--ease-out),
+      opacity var(--dur-s) var(--ease-out);
+  }
+  .burger__bar:nth-child(1) {
+    top: calc(50% - 7px);
+  }
+  .burger__bar:nth-child(2) {
+    top: 50%;
+  }
+  .burger__bar:nth-child(3) {
+    top: calc(50% + 7px);
+  }
+  .burger[aria-expanded='true'] .burger__bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .burger[aria-expanded='true'] .burger__bar:nth-child(2) {
+    opacity: 0;
+  }
+  .burger[aria-expanded='true'] .burger__bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (max-width: 1000px) {
+    .site-header__nav {
+      display: none;
+    }
+    .site-header__inner {
+      grid-template-columns: 1fr auto;
+    }
+    .site-header__logo {
+      padding-inline: 0;
+      justify-self: start;
+    }
+    .burger {
+      display: block;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .site-header__status {
+      display: none;
+    }
+    .site-header__message > span:last-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+</style>

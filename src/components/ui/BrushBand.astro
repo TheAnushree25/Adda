@@ -1,0 +1,58 @@
+---
+/** A band of loose painted strokes used to blend one section into the next. */
+import { ribbon } from '@lib/shapes';
+
+interface Props {
+  class?: string;
+  base?: string;
+  light?: string;
+  dark?: string;
+  seed?: number;
+}
+
+const {
+  class: className,
+  base = 'var(--c-plum)',
+  light = 'var(--c-mauve)',
+  dark = 'var(--c-deep)',
+  seed = 3,
+} = Astro.props;
+const strokes = [
+  { d: ribbon(seed * 7 + 1, 1440, 260, 5, 0.32), w: 110, c: dark, o: 0.9 },
+  { d: ribbon(seed * 7 + 2, 1440, 260, 7, 0.4), w: 46, c: light, o: 0.9 },
+  { d: ribbon(seed * 7 + 3, 1440, 260, 4, 0.28), w: 22, c: dark, o: 0.85 },
+  { d: ribbon(seed * 7 + 4, 1440, 260, 6, 0.36), w: 8, c: light, o: 1 },
+  { d: ribbon(seed * 7 + 5, 1440, 260, 8, 0.42), w: 3, c: 'var(--c-paper)', o: 0.55 },
+];
+---
+
+<div class:list={['brush-band u-decor', className]} style={`--band:${base}`} aria-hidden="true">
+  <svg viewBox="0 0 1440 260" preserveAspectRatio="none">
+    {strokes.map((s) => (
+      <path
+        d={s.d}
+        fill="none"
+        stroke={s.c}
+        stroke-width={s.w}
+        stroke-linecap="round"
+        opacity={s.o}
+        data-draw
+      />
+    ))}
+  </svg>
+</div>
+
+<style>
+  .brush-band {
+    position: relative;
+    height: clamp(7rem, 5rem + 6vw, 12rem);
+    background: var(--band);
+    overflow: hidden;
+  }
+  .brush-band svg {
+    position: absolute;
+    inset: -10% -2%;
+    width: 104%;
+    height: 120%;
+  }
+</style>

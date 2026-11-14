@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { site } from '@data/site';
+---
+
+<BaseLayout
+  title="Privacy policy"
+  description={`How ${site.name} handles personal information.`}
+  headerTheme="paper"
+  page="privacy"
+>
+  <section class="legal theme-paper section">
+    <div class="container legal__inner">
+      <h1 class="t-display-m" data-reveal="lines">
+        Privacy policy
+      </h1>
+      <div class="prose t-body-m">
+        <p>
+          <em>Placeholder text — have this page reviewed before launch.</em>
+        </p>
+        <p>
+          This website is a static brochure for {site.legalName}. It does not use cookies, analytics or
+          advertising trackers, and it does not collect personal information through forms.
+        </p>
+        <h2>Contacting us</h2>
+        <p>
+          When you call us or email <a href={`mailto:${site.email}`}>{site.email}</a> to book a table, plan an
+          event or apply for a job, we use the details you share only to answer that request. We keep booking
+          details for up to 12 months and job applications for up to 6 months, then delete them.
+        </p>
+        <h2>Third-party links</h2>
+        <p>
+          Links to maps, ordering and social platforms open their own websites, which have their own privacy
+          policies.
+        </p>
+        <h2>Your rights</h2>
+        <p>
+          You can ask us at any time what information we hold about you, ask us to correct it or ask us to
+          delete it by writing to <a href={`mailto:${site.email}`}>{site.email}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal {
+    padding-top: calc(var(--header-h) + var(--section-pad) * 0.6);
+  }
+  .legal__inner {
+    display: grid;
+    gap: 2.5rem;
+  }
+</style>

@@ -1,0 +1,69 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Button from '@components/ui/Button.astro';
+import { blobFrames } from '@lib/shapes';
+import { url } from '@lib/paths';
+
+const [d, ...frames] = blobFrames({ seed: 404, cx: 50, cy: 50, r: 42, points: 7, wobble: 0.5 }, 4);
+---
+
+<BaseLayout title="Page not found" headerTheme="plum" page="not-found" noindex>
+  <section class="nf theme-plum">
+    <svg class="nf__blob u-decor" viewBox="0 0 100 100" aria-hidden="true">
+      <path d={d} data-morph data-shapes={frames.join('|')} fill="var(--c-deep)"></path>
+    </svg>
+    <div class="nf__inner container">
+      <p class="t-label-l">Error 404</p>
+      <h1 class="t-display-l" data-reveal="lines">
+        This table is empty
+      </h1>
+      <p class="t-body-m nf__text">
+        The page you were looking for has been cleared away. Let’s get you back to something delicious.
+      </p>
+      <div class="nf__actions">
+        <Button href={url('/')} tone="light">
+          Back home
+        </Button>
+        <Button href={url('/menu/')} variant="text">
+          See the menus
+        </Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding-block: calc(var(--header-h) + 3rem) 8rem;
+    overflow: clip;
+  }
+
+  .nf__blob {
+    position: absolute;
+    width: min(70vw, 52rem);
+    right: -10vw;
+    bottom: -14vw;
+  }
+
+  .nf__inner {
+    position: relative;
+    display: grid;
+    gap: 1.6rem;
+    justify-items: start;
+  }
+
+  .nf__text {
+    max-width: 30rem;
+  }
+
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+  }
+</style>

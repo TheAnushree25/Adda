@@ -1,0 +1,12 @@
+{
+  "name": "Mirabelle — Café · Bistro · Bar",
+  "short_name": "Mirabelle",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f6f4",
+  "theme_color": "#4b2b32",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

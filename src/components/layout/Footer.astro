@@ -1,0 +1,268 @@
+---
+import { site, footerNav } from '@data/site';
+import HoursCard from './HoursCard.astro';
+import Icon from '@components/ui/Icon.astro';
+import Monogram from '@components/ui/Monogram.astro';
+import { ribbon } from '@lib/shapes';
+import { url } from '@lib/paths';
+
+const year = new Date().getFullYear();
+const strokes = [
+  ribbon(11, 1000, 420, 5, 0.32),
+  ribbon(23, 1000, 420, 4, 0.28),
+  ribbon(37, 1000, 420, 6, 0.3),
+];
+---
+
+<footer class="site-footer theme-deep" data-module="parallax draw">
+  <svg
+    class="site-footer__strokes u-decor"
+    viewBox="0 0 1000 420"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+  >
+    {strokes.map((d, i) => (
+      <path
+        d={d}
+        data-draw
+        fill="none"
+        stroke="var(--c-plum)"
+        stroke-width={[46, 22, 10][i]}
+        stroke-linecap="round"
+        opacity={[0.95, 0.75, 0.6][i]}
+      />
+    ))}
+  </svg>
+
+  <div class="site-footer__inner container">
+    <div class="site-footer__hours">
+      <HoursCard />
+    </div>
+
+    <div class="site-footer__main">
+      <dl class="site-footer__contact">
+        <div class="site-footer__cell">
+          <dt class="t-label-s">Address</dt>
+          <dd class="t-label-m">
+            <a href={site.mapsUrl} target="_blank" rel="noopener noreferrer">
+              {site.address.street}
+              <br />
+              {site.address.city}, {site.address.region}
+              {site.address.postalCode}
+            </a>
+          </dd>
+        </div>
+        <div class="site-footer__cell">
+          <dt class="t-label-s">Phone</dt>
+          <dd class="t-label-m">
+            <a href={site.phone.href}>{site.phone.display}</a>
+          </dd>
+        </div>
+        <div class="site-footer__cell">
+          <dt class="t-label-s">Email</dt>
+          <dd class="t-label-m">
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </dd>
+        </div>
+      </dl>
+
+      <div class="site-footer__nav-row">
+        <nav aria-label="Footer">
+          <ul class="site-footer__nav" role="list">
+            {footerNav.map((l) => (
+              <li>
+                <a class="t-headline-s site-footer__link" href={l.href} data-nav-link>
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <a class="t-body-s site-footer__legal" href={url('/privacy/')}>
+          Privacy policy
+        </a>
+        <ul class="site-footer__socials" role="list">
+          {site.socials.map((s) => (
+            <li>
+              <a
+                class="site-footer__social"
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+              >
+                <Icon name={s.icon} size={18} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="site-footer__bottom">
+        <p class="t-label-s">
+          © {year} {site.name} · Placeholder content for demonstration
+        </p>
+        <div class="site-footer__badge">
+          <Monogram size="clamp(8rem, 6rem + 6vw, 12rem)" tone="paper" />
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    overflow: clip;
+    padding-block: var(--section-pad) 7rem;
+  }
+
+  .site-footer__strokes {
+    position: absolute;
+    right: -5%;
+    bottom: -4rem;
+    width: 75%;
+    height: 22rem;
+    transform: rotate(-8deg);
+  }
+
+  .site-footer__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 3rem;
+  }
+
+  .site-footer__hours {
+    grid-column: 1 / 5;
+  }
+
+  .site-footer__main {
+    grid-column: 6 / 13;
+    display: grid;
+    align-content: start;
+    gap: 3rem;
+  }
+
+  .site-footer__contact {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-block: 1px solid rgb(var(--c-paper-rgb) / 0.5);
+  }
+
+  .site-footer__cell {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .site-footer__cell + .site-footer__cell {
+    border-left: 1px solid rgb(var(--c-paper-rgb) / 0.5);
+  }
+  .site-footer__cell dd a {
+    overflow-wrap: anywhere;
+  }
+
+  .site-footer__nav-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: start;
+    gap: 2rem;
+  }
+
+  .site-footer__nav {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .site-footer__link {
+    display: inline-block;
+    transition:
+      transform var(--dur-m) var(--ease-out),
+      font-style 0s;
+  }
+  @media (hover: hover) {
+    .site-footer__link:hover {
+      transform: translateX(0.5rem);
+      font-style: italic;
+    }
+  }
+  .site-footer__link[aria-current='page'] {
+    font-style: italic;
+  }
+
+  .site-footer__legal {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .site-footer__socials {
+    display: flex;
+  }
+  .site-footer__social {
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgb(var(--c-paper-rgb) / 0.6);
+    margin-left: -1px;
+    transition:
+      background var(--dur-s) var(--ease-out),
+      color var(--dur-s) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .site-footer__social:hover {
+      background: var(--c-paper);
+      color: var(--c-deep);
+    }
+  }
+
+  .site-footer__bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .site-footer__badge {
+    margin-bottom: -2rem;
+  }
+
+  @media (max-width: 1200px) {
+    .site-footer__hours {
+      grid-column: 1 / 6;
+    }
+    .site-footer__main {
+      grid-column: 7 / 13;
+    }
+    .site-footer__contact {
+      grid-template-columns: 1fr;
+    }
+    .site-footer__cell + .site-footer__cell {
+      border-left: 0;
+      border-top: 1px solid rgb(var(--c-paper-rgb) / 0.5);
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .site-footer__hours,
+    .site-footer__main {
+      grid-column: 1 / -1;
+    }
+    .site-footer__hours {
+      max-width: 28rem;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .site-footer__nav-row {
+      grid-template-columns: 1fr;
+    }
+    .site-footer__bottom {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+    }
+  }
+</style>

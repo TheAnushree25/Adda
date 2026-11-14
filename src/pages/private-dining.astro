@@ -1,0 +1,344 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/ui/Icon.astro';
+import { rooms } from '@data/rooms';
+import { site } from '@data/site';
+import { swirl, ribbon, blob } from '@lib/shapes';
+import heroImage from '@assets/images/pd-hero.jpg';
+
+const clip = blob({ seed: 22, cx: 52, cy: 54, r: 50, points: 8, wobble: 0.34, stretch: [1.1, 1] });
+const swirls = [swirl(3, 600, 600), ribbon(88, 900, 500, 4, 0.32), swirl(41, 600, 600)];
+---
+
+<BaseLayout
+  title="Private Dining"
+  description="Private rooms for 10 to 40 guests: birthdays, rehearsal dinners, team celebrations and more at Mirabelle."
+  headerTheme="plum"
+  page="private-dining"
+>
+  <section class="pd-hero theme-plum" aria-labelledby="pd-page-title">
+    <svg class="pd-hero__swirl pd-hero__swirl--a u-decor" viewBox="0 0 600 600" aria-hidden="true">
+      <path
+        d={swirls[0]}
+        data-draw
+        fill="none"
+        stroke="var(--c-mauve)"
+        stroke-width="44"
+        stroke-linecap="round"
+      ></path>
+    </svg>
+    <svg class="pd-hero__swirl pd-hero__swirl--b u-decor" viewBox="0 0 900 500" aria-hidden="true">
+      <path
+        d={swirls[1]}
+        data-draw
+        fill="none"
+        stroke="var(--c-mauve)"
+        stroke-width="38"
+        stroke-linecap="round"
+      ></path>
+    </svg>
+    <svg width="0" height="0" class="pd-hero__defs" aria-hidden="true">
+      <clipPath id="pd-hero-clip" clipPathUnits="objectBoundingBox">
+        <path transform="scale(0.01)" d={clip}></path>
+      </clipPath>
+    </svg>
+
+    <div class="container pd-hero__inner">
+      <div class="pd-hero__head">
+        <Eyebrow centered>Private dining</Eyebrow>
+        <h1 id="pd-page-title" class="t-display-m" data-reveal="lines">
+          The perfect room for your private events
+        </h1>
+      </div>
+      <div class="pd-hero__copy">
+        <p class="t-label-l" data-reveal="fade-up">
+          Flexible rooms, a mood made to measure, and service focused on you.
+        </p>
+        <p class="t-body-m" data-reveal="fade-up" data-reveal-delay="0.1">
+          A business dinner, a milestone birthday or a long lunch with the whole family — our private rooms
+          adapt to the occasion. Intimate, convivial and warm, with a team that sweats every detail so you can
+          enjoy your guests.
+        </p>
+        <div data-reveal="fade-up" data-reveal-delay="0.2">
+          <Button href={`mailto:${site.email}?subject=Private%20event`} tone="light">
+            Request a quote
+          </Button>
+        </div>
+      </div>
+      <div class="pd-hero__media" data-reveal="fade">
+        <Image
+          src={heroImage}
+          alt="A warm dining room with arches, chandeliers and white tablecloths"
+          widths={[640, 1000, 1400]}
+          sizes="(max-width: 1000px) 100vw, 50vw"
+          loading="eager"
+          data-parallax="6"
+          data-parallax-zoom
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="rooms theme-paper section" aria-label="Our private rooms">
+    <div class="container">
+      {rooms.map((r, i) => (
+        <article class:list={['room', i % 2 === 1 && 'room--flip']} aria-labelledby={`room-${i}`}>
+          <div class="room__copy">
+            <h2 id={`room-${i}`} class="t-display-s" data-reveal="lines">
+              {r.name}
+            </h2>
+            <p class="t-accent-l" data-reveal="fade-up">
+              {r.capacity}
+            </p>
+            <p class="t-body-m" data-reveal="fade-up">
+              {r.summary}
+            </p>
+            <ul class="room__accordion" role="list" data-module="accordion">
+              {[
+                { label: 'Services available', items: r.services },
+                { label: 'Room features', items: r.features },
+              ].map((g, j) => (
+                <li class="room__acc-item" data-accordion-item>
+                  <button
+                    class="room__acc-trigger t-label-s"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls={`room-${i}-acc-${j}`}
+                    data-accordion-trigger
+                  >
+                    <span>{g.label}</span>
+                    <Icon name="chevron-down" size={18} class="room__chev" />
+                  </button>
+                  <div class="room__acc-panel" id={`room-${i}-acc-${j}`} hidden>
+                    <ul class="room__list t-body-s">
+                      {g.items.map((it) => (
+                        <li>{it}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div data-reveal="fade-up">
+              <Button href={site.phone.href} tone="brand">
+                Call us
+              </Button>
+            </div>
+          </div>
+          <div class="room__media" data-reveal="image">
+            <Image
+              src={r.image}
+              alt={r.alt}
+              widths={[640, 960, 1300]}
+              sizes="(max-width: 1000px) 100vw, 50vw"
+              loading="lazy"
+              decoding="async"
+              data-parallax="5"
+              data-parallax-zoom
+            />
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="pd-cta theme-plum section" aria-labelledby="pd-cta-title">
+    <div class="container pd-cta__inner">
+      <h2 id="pd-cta-title" class="t-display-s" data-reveal="lines">
+        Tell us about your event
+      </h2>
+      <p class="t-accent-m" data-reveal="fade-up">
+        Date, number of guests and the mood you’re after — we’ll come back within one business day with ideas
+        and a quote.
+      </p>
+      <div class="pd-cta__actions" data-reveal="fade-up">
+        <Button href={`mailto:${site.email}?subject=Private%20event`} tone="light">
+          Email our events team
+        </Button>
+        <Button href={site.phone.href} variant="text">
+          {site.phone.display}
+        </Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pd-hero {
+    position: relative;
+    padding-top: calc(var(--header-h) + clamp(1.5rem, 1rem + 2vw, 3rem));
+    overflow: clip;
+  }
+
+  .pd-hero__defs {
+    position: absolute;
+  }
+
+  .pd-hero__swirl {
+    position: absolute;
+    pointer-events: none;
+  }
+  .pd-hero__swirl--a {
+    width: clamp(18rem, 12rem + 18vw, 34rem);
+    right: -4rem;
+    top: 18%;
+  }
+  .pd-hero__swirl--b {
+    width: clamp(22rem, 14rem + 24vw, 44rem);
+    left: -10rem;
+    bottom: -6rem;
+    transform: rotate(18deg);
+  }
+
+  .pd-hero__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 3rem;
+  }
+
+  .pd-hero__head {
+    grid-column: 2 / 12;
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .pd-hero__copy {
+    grid-column: 1 / 6;
+    display: grid;
+    gap: 1.25rem;
+    align-content: center;
+    justify-items: start;
+    padding-bottom: 4rem;
+  }
+
+  .pd-hero__media {
+    grid-column: 6 / 13;
+    position: relative;
+    aspect-ratio: 5 / 4;
+    margin-right: calc(var(--container-pad) * -1);
+    clip-path: url(#pd-hero-clip);
+  }
+
+  .pd-hero__media :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .room {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 2.5rem;
+    align-items: center;
+  }
+
+  .room + .room {
+    margin-top: clamp(4rem, 3rem + 5vw, 8rem);
+  }
+
+  .room__copy {
+    grid-column: 1 / 6;
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+  }
+
+  .room__media {
+    grid-column: 7 / 13;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .room__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .room--flip .room__copy {
+    grid-column: 8 / 13;
+    grid-row: 1;
+  }
+  .room--flip .room__media {
+    grid-column: 1 / 7;
+    grid-row: 1;
+  }
+
+  .room__accordion {
+    width: 100%;
+    margin-block: 0.75rem 1rem;
+    border-bottom: 1px solid var(--c-plum);
+  }
+
+  .room__acc-item {
+    border-top: 1px solid var(--c-plum);
+  }
+
+  .room__acc-trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 1.1rem;
+    text-align: left;
+  }
+
+  .room__acc-trigger :global(.room__chev) {
+    transition: transform var(--dur-m) var(--ease-out);
+  }
+  .room__acc-trigger[aria-expanded='true'] :global(.room__chev) {
+    transform: rotate(180deg);
+  }
+
+  .room__acc-panel {
+    overflow: hidden;
+  }
+
+  .room__list {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0 0 1.2rem 1.1rem;
+  }
+
+  .pd-cta__inner {
+    display: grid;
+    justify-items: center;
+    gap: 1.6rem;
+    text-align: center;
+    max-width: 48rem;
+  }
+
+  .pd-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 2rem;
+  }
+
+  @media (max-width: 1000px) {
+    .pd-hero__head,
+    .pd-hero__copy,
+    .pd-hero__media,
+    .room__copy,
+    .room__media,
+    .room--flip .room__copy,
+    .room--flip .room__media {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+    .pd-hero__media {
+      margin-right: 0;
+    }
+  }
+</style>

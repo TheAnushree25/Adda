@@ -1,0 +1,179 @@
+---
+/**
+ * Button / link-button.
+ *  solid    – filled with the accent; the fill wipes away on hover
+ *  outlined – outlined; the fill wipes in on hover
+ *  text     – underlined link whose underline retracts on hover
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+type Variant = 'solid' | 'outlined' | 'text';
+
+type Props = {
+  href?: string;
+  variant?: Variant;
+  /** Force the light (cream) colourway regardless of section theme. */
+  tone?: 'auto' | 'light' | 'brand';
+  class?: string;
+  type?: 'button' | 'submit';
+  external?: boolean;
+} & Omit<HTMLAttributes<'a'>, 'class' | 'href' | 'type'>;
+
+const {
+  href,
+  variant = 'solid',
+  tone = 'auto',
+  class: className,
+  type = 'button',
+  external,
+  ...rest
+} = Astro.props;
+const classes = ['btn', `btn--${variant}`, tone !== 'auto' && `btn--tone-${tone}`, className];
+---
+
+{href ? (
+  <a
+    class:list={classes}
+    href={href}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noopener noreferrer' : undefined}
+    {...rest}
+  >
+    <span class="btn__label">
+      <slot />
+    </span>
+  </a>
+) : (
+  <button class:list={classes} type={type} {...(rest as HTMLAttributes<'button'>)}>
+    <span class="btn__label">
+      <slot />
+    </span>
+  </button>
+)}
+
+<style>
+  .btn {
+    --btn-fill: var(--accent);
+    --btn-ink: var(--on-accent);
+    --btn-line: var(--accent);
+    --btn-ink-hover: var(--accent);
+
+    position: relative;
+    z-index: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: var(--btn-h);
+    padding: 0 2rem;
+    border: 1px solid var(--btn-line);
+    color: var(--btn-ink);
+    font-family: var(--f-sans);
+    font-size: var(--fs-label-m);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    text-transform: uppercase;
+    white-space: nowrap;
+    isolation: isolate;
+    transition: color var(--dur-m) var(--ease-out);
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: -0.5px;
+    z-index: -1;
+    background-color: var(--btn-fill);
+    clip-path: inset(0);
+    transition: clip-path var(--dur-m) var(--ease-out);
+  }
+
+  .btn--tone-light {
+    --btn-fill: var(--c-paper);
+    --btn-ink: var(--c-plum);
+    --btn-line: var(--c-paper);
+    --btn-ink-hover: var(--c-paper);
+  }
+
+  .btn--tone-brand {
+    --btn-fill: var(--c-plum);
+    --btn-ink: var(--c-paper);
+    --btn-line: var(--c-plum);
+    --btn-ink-hover: var(--c-plum);
+  }
+
+  @media (hover: hover) {
+    .btn--solid:hover {
+      color: var(--btn-ink-hover);
+    }
+    .btn--solid:hover::before {
+      clip-path: inset(100% 0 0 0);
+    }
+  }
+
+  .btn--solid:focus-visible {
+    color: var(--btn-ink-hover);
+  }
+  .btn--solid:focus-visible::before {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  /* Outlined: starts empty, the fill rises on hover. */
+  .btn--outlined {
+    color: var(--btn-fill);
+  }
+  .btn--outlined::before {
+    clip-path: inset(100% 0 0 0);
+  }
+  @media (hover: hover) {
+    .btn--outlined:hover {
+      color: var(--btn-ink);
+    }
+    .btn--outlined:hover::before {
+      clip-path: inset(0);
+    }
+  }
+  .btn--outlined:focus-visible {
+    color: var(--btn-ink);
+  }
+  .btn--outlined:focus-visible::before {
+    clip-path: inset(0);
+  }
+
+  /* Text link */
+  .btn--text {
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    color: currentColor;
+  }
+  .btn--text::before {
+    display: none;
+  }
+  .btn--text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    clip-path: inset(0);
+    transition: clip-path var(--dur-m) var(--ease-out-cubic);
+  }
+  @media (hover: hover) {
+    .btn--text:hover::after {
+      clip-path: inset(0 0 0 100%);
+      transition-duration: var(--dur-s);
+    }
+  }
+  .btn--text:focus-visible::after {
+    clip-path: inset(0 0 0 100%);
+  }
+
+  .btn[disabled] {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+</style>

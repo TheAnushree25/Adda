@@ -1,0 +1,502 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Icon from '@components/ui/Icon.astro';
+import { menus, dietLabels, type DietTag } from '@data/menu';
+import { formatPrice } from '@lib/format';
+import { blob } from '@lib/shapes';
+import spread from '@assets/images/menu-spread.jpg';
+
+const filterTags: DietTag[] = ['vegetarian', 'vegan', 'gluten-free', 'spicy'];
+const totalDishes = menus.reduce((n, m) => n + m.sections.reduce((k, s) => k + s.items.length, 0), 0);
+const heroClip = blob({ seed: 14, cx: 58, cy: 50, r: 52, points: 8, wobble: 0.36, stretch: [1.05, 1.1] });
+---
+
+<BaseLayout
+  title="Menus"
+  description="All-day plates, wood-fired pizza, weekend brunch, coffee and cocktails — browse Mirabelle's menus and filter by dietary needs."
+  headerTheme="paper"
+  page="menu"
+>
+  <div class="menu-page" data-module="menu-page">
+    <nav class="menu-tabs" data-menu-tabs aria-label="Menus">
+      <ul class="menu-tabs__list container" role="list">
+        {menus.map((m) => (
+          <li>
+            <a class="menu-tabs__tab t-label-s" href={`#${m.id}`} data-menu-jump data-menu-tab={m.id}>
+              <Icon name={m.icon} size={26} />
+              <span>{m.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <section class="menu-hero theme-plum" aria-labelledby="menu-title">
+      <svg width="0" height="0" class="menu-hero__defs" aria-hidden="true">
+        <clipPath id="menu-hero-clip" clipPathUnits="objectBoundingBox">
+          <path transform="scale(0.01)" d={heroClip}></path>
+        </clipPath>
+      </svg>
+      <div class="menu-hero__copy">
+        <h1 id="menu-title" class="t-display-m" data-reveal="lines">
+          Our menus
+        </h1>
+        <p class="t-label-m" data-reveal="fade-up">
+          Breakfast 7–11 · Lunch &amp; dinner 11–10 · Brunch on weekends
+        </p>
+        <p class="t-body-m menu-hero__text" data-reveal="fade-up" data-reveal-delay="0.1">
+          {totalDishes} dishes and drinks, written around the market and the season. Prices and availability
+          may change depending on the day's catch and harvest.
+        </p>
+      </div>
+      <div class="menu-hero__media" data-reveal="fade">
+        <Image
+          src={spread}
+          alt="A table seen from above, crowded with shared plates"
+          widths={[640, 1000, 1400]}
+          sizes="(max-width: 1000px) 100vw, 55vw"
+          loading="eager"
+          class="menu-hero__img"
+          data-parallax="5"
+          data-parallax-zoom
+        />
+      </div>
+    </section>
+
+    <div class="menu-body container">
+      <aside class="menu-aside" aria-label="Quick access">
+        <div class="menu-aside__sticky">
+          <p class="t-label-s menu-aside__kicker">Quick access</p>
+          {menus.map((m) => (
+            <div class="menu-aside__group">
+              <p class="t-title-m menu-aside__menu">{m.title}</p>
+              <ul role="list">
+                {m.sections.map((s) => (
+                  <li>
+                    <a class="menu-aside__link t-label-s" href={`#${s.id}`} data-menu-jump>
+                      <span>{s.title}</span>
+                      <span data-count-for={s.id}>{s.items.length}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </aside>
+
+      <div class="menu-content">
+        <div class="menu-filters theme-deep" role="group" aria-labelledby="filters-title">
+          <p id="filters-title" class="t-accent-l">
+            Allergies or dietary preferences?
+          </p>
+          <div class="menu-filters__chips">
+            {filterTags.map((t) => (
+              <button class="chip t-label-s" type="button" aria-pressed="false" data-filter={t}>
+                <span class="chip__badge">{dietLabels[t].short}</span>
+                {dietLabels[t].label}
+              </button>
+            ))}
+          </div>
+          <div class="menu-filters__foot">
+            <p class="t-label-s" data-filter-status aria-live="polite">
+              0 filters active · {totalDishes} dishes
+            </p>
+            <button class="menu-filters__reset t-label-s" type="button" data-filter-reset>
+              Reset
+            </button>
+          </div>
+          <p class="t-body-s menu-filters__note">
+            Our kitchen handles nuts, gluten and dairy. Please tell your server about any allergy — we're
+            happy to help.
+          </p>
+        </div>
+
+        <p class="menu-empty t-accent-l" data-menu-empty hidden>
+          No dishes match every filter. Try removing one.
+        </p>
+
+        {menus.map((m) => (
+          <section class="menu-block" id={m.id} aria-labelledby={`${m.id}-title`}>
+            <header class="menu-block__head">
+              <Icon name={m.icon} size={34} />
+              <h2 id={`${m.id}-title`} class="t-display-s">
+                {m.title}
+              </h2>
+              <p class="t-label-m">{m.hours}</p>
+              <p class="t-accent-m">{m.intro}</p>
+            </header>
+
+            {m.sections.map((s) => (
+              <section
+                class="menu-section"
+                id={s.id}
+                data-menu-section
+                data-menu-of={m.id}
+                aria-labelledby={`${s.id}-title`}
+              >
+                <header class="menu-section__head">
+                  <h3 id={`${s.id}-title`} class="t-display-s">
+                    {s.title}
+                  </h3>
+                  <span class="t-display-s menu-section__count" data-count-for={s.id} aria-label="dishes">
+                    {s.items.length}
+                  </span>
+                </header>
+                <ul class="dishes" role="list">
+                  {s.items.map((item) => (
+                    <li class="dish" data-dish data-tags={(item.tags ?? []).join(' ')}>
+                      <div class="dish__main">
+                        <h4 class="dish__name t-label-l">
+                          {item.name}
+                          {item.signature && (
+                            <span class="dish__signature" title="House favourite">
+                              <Icon name="sparkle" size={14} label="House favourite" />
+                            </span>
+                          )}
+                        </h4>
+                        <p class="t-body-s dish__desc">{item.description}</p>
+                        <div class="dish__prices">
+                          {item.prices.map((p) => (
+                            <p class="dish__price">
+                              <span class="t-label-m">{formatPrice(p.amount)}</span>
+                              {p.label && <span class="t-label-s dish__size">{p.label}</span>}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                      {item.tags && item.tags.length > 0 && (
+                        <ul class="dish__tags" role="list" aria-label="Dietary information">
+                          {item.tags.map((t) => (
+                            <li class="dish__tag t-label-s" title={dietLabels[t].label}>
+                              <span aria-hidden="true">{dietLabels[t].short}</span>
+                              <span class="u-sr-only">{dietLabels[t].label}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .menu-page {
+    padding-top: var(--header-h);
+  }
+
+  /* Tabs ------------------------------------------------------------------ */
+  .menu-tabs {
+    position: sticky;
+    top: var(--header-offset, 0px);
+    z-index: 20;
+    background: var(--c-paper);
+    border-bottom: 1px solid var(--c-plum);
+    transition: top 0.6s var(--ease-out);
+  }
+
+  .menu-tabs__list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(8rem, 1fr);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-inline: 0;
+  }
+
+  .menu-tabs__tab {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.4rem;
+    padding: 0.9rem 0.75rem;
+    border-left: 1px solid rgb(var(--c-plum-rgb) / 0.4);
+    text-align: center;
+    transition:
+      background var(--dur-s) var(--ease-out),
+      color var(--dur-s) var(--ease-out);
+  }
+
+  .menu-tabs__list li:last-child .menu-tabs__tab {
+    border-right: 1px solid rgb(var(--c-plum-rgb) / 0.4);
+  }
+
+  .menu-tabs__tab:global(.is-current),
+  .menu-tabs__tab:hover {
+    background: var(--c-plum);
+    color: var(--c-paper);
+  }
+
+  /* Hero ------------------------------------------------------------------ */
+  .menu-hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    min-height: clamp(26rem, 18rem + 20vw, 36rem);
+    overflow: clip;
+  }
+
+  .menu-hero__defs {
+    position: absolute;
+  }
+
+  .menu-hero__copy {
+    display: grid;
+    align-content: center;
+    gap: 1.25rem;
+    padding: 3rem var(--container-pad);
+  }
+
+  .menu-hero__text {
+    max-width: 26rem;
+  }
+
+  .menu-hero__media {
+    position: relative;
+    clip-path: url(#menu-hero-clip);
+    margin: -6% -8% -6% 0;
+  }
+
+  .menu-hero__media :global(.menu-hero__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Body ------------------------------------------------------------------ */
+  .menu-body {
+    display: grid;
+    grid-template-columns: minmax(14rem, 3fr) minmax(0, 9fr);
+    column-gap: clamp(2rem, 1rem + 3vw, 4rem);
+    padding-top: 0;
+    padding-bottom: var(--section-pad);
+  }
+
+  .menu-aside {
+    border-right: 1px solid var(--c-plum);
+    padding-right: 2rem;
+  }
+
+  .menu-aside__sticky {
+    position: sticky;
+    top: calc(var(--header-offset, 0px) + 7rem);
+    padding-top: 3rem;
+    display: grid;
+    gap: 1.75rem;
+    transition: top 0.6s var(--ease-out);
+  }
+
+  .menu-aside__menu {
+    margin-bottom: 0.6rem;
+  }
+
+  .menu-aside__link {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.3rem;
+    transition:
+      padding var(--dur-s) var(--ease-out),
+      opacity var(--dur-s) var(--ease-out);
+    opacity: 0.75;
+  }
+
+  .menu-aside__link:hover,
+  .menu-aside__link:global(.is-current) {
+    opacity: 1;
+    padding-left: 0.5rem;
+  }
+
+  .menu-aside__link:global(.is-current) span:first-child {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .menu-content {
+    padding-top: 3rem;
+    min-width: 0;
+  }
+
+  /* Filters */
+  .menu-filters {
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    margin-bottom: 4rem;
+  }
+
+  .menu-filters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem 0.4rem 0.4rem;
+    border: 1px solid rgb(var(--c-paper-rgb) / 0.6);
+    border-radius: 999px;
+    transition:
+      background var(--dur-s) var(--ease-out),
+      color var(--dur-s) var(--ease-out);
+  }
+
+  .chip__badge {
+    display: grid;
+    place-items: center;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    padding-inline: 0.3rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    font-size: 0.62rem;
+  }
+
+  .chip[aria-pressed='true'] {
+    background: var(--c-paper);
+    color: var(--c-deep);
+  }
+
+  .menu-filters__foot {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .menu-filters__reset {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .menu-filters__note {
+    opacity: 0.85;
+  }
+
+  .menu-empty {
+    padding: 2rem 0 4rem;
+  }
+
+  /* Blocks & sections */
+  .menu-block + .menu-block {
+    margin-top: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+
+  .menu-block__head {
+    display: grid;
+    justify-items: start;
+    gap: 0.8rem;
+    padding-bottom: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 4px double var(--c-plum);
+  }
+
+  .menu-section {
+    padding-top: 3rem;
+    scroll-margin-top: 8rem;
+  }
+
+  .menu-section__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--c-plum);
+    margin-bottom: 1rem;
+  }
+
+  .menu-section__count {
+    font-style: italic;
+  }
+
+  .dish {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem 2rem;
+    padding-block: 1.6rem;
+    border-bottom: 1px solid rgb(var(--c-plum-rgb) / 0.25);
+  }
+
+  .dish__name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .dish__signature {
+    display: inline-grid;
+    color: var(--c-mauve);
+  }
+
+  .dish__desc {
+    margin-top: 0.4rem;
+    max-width: 36rem;
+  }
+
+  .dish__prices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.5rem;
+    margin-top: 0.9rem;
+  }
+
+  .dish__price {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .dish__size {
+    opacity: 0.75;
+  }
+
+  .dish__tags {
+    display: flex;
+    gap: 0.35rem;
+    align-self: start;
+  }
+
+  .dish__tag {
+    display: grid;
+    place-items: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding-inline: 0.35rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.6rem;
+  }
+
+  @media (max-width: 1000px) {
+    .menu-hero {
+      grid-template-columns: 1fr;
+    }
+    .menu-hero__media {
+      min-height: 18rem;
+      margin: 0;
+    }
+    .menu-body {
+      grid-template-columns: 1fr;
+    }
+    .menu-aside {
+      display: none;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .dish {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

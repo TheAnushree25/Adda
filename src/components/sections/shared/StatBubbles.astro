@@ -1,0 +1,186 @@
+---
+/** Floating number bubbles with photos over a marbled background. */
+import RoundPhoto from '@components/ui/RoundPhoto.astro';
+import { stats } from '@data/stats';
+import { ribbon } from '@lib/shapes';
+import table from '@assets/images/stats-table.jpg';
+import friends from '@assets/images/stats-friends.jpg';
+
+const marble = [
+  { d: ribbon(5, 1440, 900, 6, 0.38), w: 64, o: 0.95 },
+  { d: ribbon(12, 1440, 900, 5, 0.3), w: 26, o: 0.85 },
+  { d: ribbon(19, 1440, 900, 7, 0.42), w: 12, o: 0.9 },
+  { d: ribbon(33, 1440, 900, 4, 0.25), w: 6, o: 0.8 },
+  { d: ribbon(41, 1440, 900, 6, 0.33), w: 3, o: 0.9 },
+];
+const tilt = [-6, 4, -3, 7];
+---
+
+<div class="bubbles">
+  <svg
+    class="bubbles__marble u-decor"
+    viewBox="0 0 1440 900"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    data-parallax="6"
+  >
+    {marble.map((m) => (
+      <path
+        d={m.d}
+        fill="none"
+        stroke="#fff"
+        stroke-width={m.w}
+        stroke-linecap="round"
+        opacity={m.o}
+        data-draw
+      />
+    ))}
+  </svg>
+
+  <ul class="bubbles__list" role="list">
+    {stats.map((s, i) => (
+      <li
+        class:list={['bubble', `bubble--${i + 1}`]}
+        style={`--bubble:${s.color}; --bubble-ink:${s.ink ?? 'var(--c-paper)'}; --tilt:${tilt[i]}deg`}
+        data-parallax={[14, 26, 8, 20][i]}
+      >
+        <div class="bubble__disc" data-reveal="pop" data-reveal-delay={String(i * 0.08)}>
+          <span class="bubble__value t-display-s" data-counter={s.value}>
+            {s.value}
+          </span>
+          <span class="bubble__label t-body-s">{s.label}</span>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  <RoundPhoto
+    src={table}
+    size="clamp(10rem, 7rem + 12vw, 21rem)"
+    class="bubbles__photo bubbles__photo--a"
+    parallax={34}
+  />
+  <RoundPhoto
+    src={friends}
+    size="clamp(9rem, 6rem + 11vw, 19rem)"
+    class="bubbles__photo bubbles__photo--b"
+    parallax={-20}
+    position="40% 50%"
+  />
+</div>
+
+<style>
+  .bubbles {
+    position: relative;
+    height: clamp(46rem, 34rem + 26vw, 60rem);
+  }
+
+  .bubbles__marble {
+    position: absolute;
+    left: -10%;
+    top: 22%;
+    width: 120%;
+    height: 70%;
+    transform: rotate(-9deg);
+  }
+
+  .bubbles__list {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bubble {
+    position: absolute;
+    width: clamp(12rem, 8rem + 12vw, 21rem);
+    aspect-ratio: 1;
+  }
+
+  .bubble__disc {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--bubble);
+    color: var(--bubble-ink, var(--c-paper));
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.35rem;
+    text-align: center;
+    padding: 18%;
+    transform: rotate(var(--tilt));
+    position: relative;
+  }
+
+  /* Double inner ring */
+  .bubble__disc::before,
+  .bubble__disc::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    opacity: 0.85;
+  }
+  .bubble__disc::before {
+    inset: 4.5%;
+  }
+  .bubble__disc::after {
+    inset: 6.5%;
+  }
+
+  .bubble__value {
+    font-variant-numeric: lining-nums;
+    font-size: clamp(2.4rem, 1.6rem + 2.4vw, 4.25rem);
+  }
+
+  .bubble--1 {
+    right: 4%;
+    top: 0;
+  }
+  .bubble--2 {
+    left: 2%;
+    top: 22%;
+  }
+  .bubble--3 {
+    left: 34%;
+    top: 20%;
+  }
+  .bubble--4 {
+    left: 16%;
+    top: 56%;
+  }
+
+  .bubbles :global(.bubbles__photo) {
+    position: absolute;
+  }
+  .bubbles :global(.bubbles__photo--a) {
+    left: 12%;
+    top: -4%;
+  }
+  .bubbles :global(.bubbles__photo--b) {
+    right: 14%;
+    top: 50%;
+  }
+
+  @media (max-width: 700px) {
+    .bubbles {
+      height: auto;
+      display: grid;
+      gap: 1rem;
+      padding-block: 2rem;
+    }
+    .bubbles__list {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .bubble {
+      position: relative;
+      inset: auto;
+      width: 100%;
+    }
+    .bubbles :global(.bubbles__photo) {
+      display: none;
+    }
+  }
+</style>

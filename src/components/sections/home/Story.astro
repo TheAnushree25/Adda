@@ -1,0 +1,136 @@
+---
+import { Image } from 'astro:assets';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Button from '@components/ui/Button.astro';
+import RoundPhoto from '@components/ui/RoundPhoto.astro';
+import BrushBand from '@components/ui/BrushBand.astro';
+import kitchen from '@assets/images/story-kitchen.jpg';
+import chef from '@assets/images/story-chef.jpg';
+import { site } from '@data/site';
+import { url } from '@lib/paths';
+---
+
+<section class="story theme-deep" aria-labelledby="story-title">
+  <div class="story__inner container section section--flush-bottom">
+    <div class="story__head">
+      <div class="story__title">
+        <Eyebrow>The café</Eyebrow>
+        <h2 id="story-title" class="t-display-m" data-reveal="lines">
+          A neighbourhood classic since {site.since}
+        </h2>
+      </div>
+      <div class="story__aside">
+        <p class="t-body-m" data-reveal="fade-up">
+          What began as a six-table coffee counter is now the corner’s living room: a bistro by day, a bar by
+          night, and a terrace that catches the very last of the sun. Same family, same recipes, a few more
+          chairs.
+        </p>
+        <div data-reveal="fade-up" data-reveal-delay="0.1">
+          <Button href={url('/about/')} tone="light">
+            Our story
+          </Button>
+        </div>
+      </div>
+    </div>
+
+    <div class="story__media">
+      <div class="story__main" data-reveal="image">
+        <Image
+          src={kitchen}
+          alt="Chefs at work in a busy, warmly lit open kitchen"
+          widths={[640, 1024, 1600, 2200]}
+          sizes="(max-width: 1000px) 100vw, 70vw"
+          loading="lazy"
+          decoding="async"
+          data-parallax="7"
+          data-parallax-zoom
+        />
+      </div>
+      <RoundPhoto
+        src={chef}
+        size="clamp(10rem, 6rem + 14vw, 24rem)"
+        class="story__circle"
+        parallax={-22}
+        position="62% 50%"
+      />
+    </div>
+  </div>
+  <BrushBand class="story__band" base="var(--c-plum)" seed={5} />
+</section>
+
+<style>
+  .story {
+    position: relative;
+    overflow: clip;
+  }
+
+  .story__head {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gutter);
+    row-gap: 2.5rem;
+    align-items: start;
+  }
+
+  .story__title {
+    grid-column: 1 / 8;
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .story__aside {
+    grid-column: 9 / 13;
+    display: grid;
+    gap: 2rem;
+    justify-items: start;
+    padding-top: 2.6rem;
+  }
+
+  .story__media {
+    position: relative;
+    margin-top: clamp(4rem, 2rem + 6vw, 8rem);
+    z-index: 1;
+    margin-bottom: clamp(-7rem, -4rem - 3vw, -4rem);
+  }
+
+  .story__main {
+    width: 72%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .story__main :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .story :global(.story__circle) {
+    position: absolute;
+    right: 4%;
+    top: 30%;
+    border: 0;
+  }
+
+  .story :global(.story__band) {
+    position: relative;
+    z-index: 0;
+  }
+
+  @media (max-width: 1000px) {
+    .story__title,
+    .story__aside {
+      grid-column: 1 / -1;
+    }
+    .story__aside {
+      padding-top: 0;
+    }
+    .story__main {
+      width: 88%;
+    }
+    .story :global(.story__circle) {
+      right: -4%;
+      top: auto;
+      bottom: -8%;
+    }
+  }
+</style>

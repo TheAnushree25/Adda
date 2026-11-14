@@ -1,0 +1,30 @@
+---
+/** Small uppercase label with hairlines — "— OUR MENUS —". */
+interface Props {
+  centered?: boolean;
+  class?: string;
+}
+const { centered = false, class: className } = Astro.props;
+---
+
+<p class:list={['eyebrow t-label-s', centered && 'eyebrow--center', className]}>
+  {centered && <span class="eyebrow__rule" aria-hidden="true" />}
+  <span>
+    <slot />
+  </span>
+  <span class="eyebrow__rule" aria-hidden="true"></span>
+</p>
+
+<style>
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .eyebrow__rule {
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: currentColor;
+  }
+</style>

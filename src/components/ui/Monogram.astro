@@ -1,0 +1,91 @@
+---
+/**
+ * Round badge: double ring, circular caption and the brand initial.
+ * Rotates gently with scroll when placed inside a [data-module="parallax"].
+ */
+import { site } from '@data/site';
+
+interface Props {
+  size?: string;
+  class?: string;
+  spin?: boolean;
+  tone?: 'brand' | 'paper';
+}
+
+const { size = '9rem', class: className, spin = true, tone = 'brand' } = Astro.props;
+const id = `mono-${Math.random().toString(36).slice(2, 8)}`;
+const caption = `${site.name} · ${site.tagline} · Since ${site.since} · `.toUpperCase();
+---
+
+<div
+  class:list={['monogram', `monogram--${tone}`, className]}
+  style={`--size:${size}`}
+  aria-hidden="true"
+  data-parallax={spin ? '0' : undefined}
+  data-parallax-rotate={spin ? '220' : undefined}
+>
+  <svg viewBox="0 0 200 200" class="monogram__svg">
+    <defs>
+      <path id={id} d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"></path>
+    </defs>
+    <circle cx="100" cy="100" r="98" class="monogram__disc"></circle>
+    <circle cx="100" cy="100" r="92" class="monogram__ring"></circle>
+    <circle cx="100" cy="100" r="88" class="monogram__ring"></circle>
+    <text class="monogram__caption">
+      <textPath href={`#${id}`} startOffset="0" textLength="458">
+        {caption}
+      </textPath>
+    </text>
+    <circle cx="100" cy="100" r="58" class="monogram__ring"></circle>
+    <text x="100" y="100" class="monogram__letter" text-anchor="middle" dominant-baseline="central">
+      {site.name.charAt(0)}
+    </text>
+  </svg>
+</div>
+
+<style>
+  .monogram {
+    width: var(--size);
+    aspect-ratio: 1;
+    pointer-events: none;
+  }
+  .monogram__svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .monogram--brand {
+    --disc: var(--c-plum);
+    --ink: var(--c-paper);
+  }
+  .monogram--paper {
+    --disc: var(--c-paper);
+    --ink: var(--c-plum);
+  }
+  .monogram__disc {
+    fill: var(--disc);
+  }
+  .monogram__ring {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.2;
+  }
+  .monogram__caption {
+    fill: var(--ink);
+    font-family: var(--f-sans);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+  }
+  .monogram__letter {
+    fill: var(--ink);
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 84px;
+    font-variation-settings:
+      'opsz' 144,
+      'SOFT' 100,
+      'WONK' 1;
+  }
+</style>

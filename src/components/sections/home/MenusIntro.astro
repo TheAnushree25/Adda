@@ -1,0 +1,343 @@
+---
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Button from '@components/ui/Button.astro';
+import RoundPhoto from '@components/ui/RoundPhoto.astro';
+import Monogram from '@components/ui/Monogram.astro';
+import { ribbonShape, type Pt } from '@lib/shapes';
+import pizza from '@assets/images/intro-pizza.jpg';
+import flame from '@assets/images/intro-flame.jpg';
+import wine from '@assets/images/intro-wine.jpg';
+import dessert from '@assets/images/intro-dessert.jpg';
+import { url } from '@lib/paths';
+
+type Ribbon = { id: string; spine: Pt[]; width: number; tone: 'mauve' | 'deep' };
+
+/** Flowing ribbons framing the section (viewBox 1440 × 1000, landscape). */
+const desktop: Ribbon[] = [
+  {
+    id: 'mi-d1',
+    width: 112,
+    tone: 'mauve',
+    spine: [
+      [-120, 80],
+      [120, 40],
+      [330, 150],
+      [320, 330],
+      [150, 400],
+      [70, 560],
+      [200, 720],
+      [150, 900],
+      [-60, 1010],
+    ],
+  },
+  {
+    id: 'mi-d2',
+    width: 124,
+    tone: 'mauve',
+    spine: [
+      [1560, 300],
+      [1350, 250],
+      [1210, 360],
+      [1270, 520],
+      [1420, 600],
+      [1400, 760],
+      [1230, 840],
+      [1290, 980],
+      [1520, 1060],
+    ],
+  },
+  {
+    id: 'mi-d3',
+    width: 64,
+    tone: 'deep',
+    spine: [
+      [920, -60],
+      [1010, 70],
+      [1160, 90],
+      [1260, -40],
+    ],
+  },
+  {
+    id: 'mi-d4',
+    width: 58,
+    tone: 'deep',
+    spine: [
+      [420, 1080],
+      [500, 960],
+      [650, 950],
+      [720, 1080],
+    ],
+  },
+];
+
+/** Portrait arrangement for phones (viewBox 420 × 1100). */
+const mobile: Ribbon[] = [
+  {
+    id: 'mi-m1',
+    width: 74,
+    tone: 'mauve',
+    spine: [
+      [-60, 120],
+      [90, 60],
+      [190, 170],
+      [120, 300],
+      [-40, 350],
+    ],
+  },
+  {
+    id: 'mi-m2',
+    width: 82,
+    tone: 'mauve',
+    spine: [
+      [480, 690],
+      [330, 760],
+      [300, 900],
+      [420, 980],
+      [500, 1070],
+    ],
+  },
+  {
+    id: 'mi-m3',
+    width: 44,
+    tone: 'deep',
+    spine: [
+      [300, -40],
+      [360, 60],
+      [480, 70],
+    ],
+  },
+  {
+    id: 'mi-m4',
+    width: 44,
+    tone: 'deep',
+    spine: [
+      [-40, 1000],
+      [70, 940],
+      [160, 1040],
+      [120, 1140],
+    ],
+  },
+];
+
+const build = (list: Ribbon[]) => list.map((r) => ({ ...r, ...ribbonShape(r.spine, r.width) }));
+const ribbonsDesktop = build(desktop);
+const ribbonsMobile = build(mobile);
+---
+
+<section class="menus-intro theme-plum section" aria-labelledby="menus-intro-title">
+  <svg
+    class="menus-intro__ribbons menus-intro__ribbons--desktop u-decor"
+    viewBox="0 0 1440 1000"
+    preserveAspectRatio="xMidYMid slice"
+    aria-hidden="true"
+  >
+    <defs>
+      {ribbonsDesktop.map((r) => (
+        <mask id={r.id} maskUnits="userSpaceOnUse" x="-200" y="-200" width="1840" height="1400">
+          <path
+            d={r.spine}
+            fill="none"
+            stroke="#fff"
+            stroke-width={r.width * 1.25}
+            stroke-linecap="round"
+            data-draw
+          />
+        </mask>
+      ))}
+    </defs>
+    {ribbonsDesktop.map((r) => (
+      <path d={r.outline} class:list={['ribbon', `ribbon--${r.tone}`]} mask={`url(#${r.id})`} />
+    ))}
+  </svg>
+
+  <svg
+    class="menus-intro__ribbons menus-intro__ribbons--mobile u-decor"
+    viewBox="0 0 420 1100"
+    preserveAspectRatio="xMidYMid slice"
+    aria-hidden="true"
+  >
+    <defs>
+      {ribbonsMobile.map((r) => (
+        <mask id={r.id} maskUnits="userSpaceOnUse" x="-200" y="-200" width="820" height="1500">
+          <path
+            d={r.spine}
+            fill="none"
+            stroke="#fff"
+            stroke-width={r.width * 1.25}
+            stroke-linecap="round"
+            data-draw
+          />
+        </mask>
+      ))}
+    </defs>
+    {ribbonsMobile.map((r) => (
+      <path d={r.outline} class:list={['ribbon', `ribbon--${r.tone}`]} mask={`url(#${r.id})`} />
+    ))}
+  </svg>
+
+  <div class="menus-intro__photos" aria-hidden="true">
+    <div class="menus-intro__slot menus-intro__slot--a">
+      <RoundPhoto src={pizza} size="clamp(11rem, 6rem + 12vw, 22rem)" ring parallax={14} />
+      <div class="menus-intro__badge" data-parallax="-30">
+        <Monogram size="clamp(5rem, 3.6rem + 3vw, 7.5rem)" tone="paper" />
+      </div>
+    </div>
+    <div class="menus-intro__slot menus-intro__slot--b">
+      <RoundPhoto
+        src={flame}
+        size="clamp(7.5rem, 4.5rem + 6.5vw, 13rem)"
+        ring
+        parallax={-22}
+        position="40% 50%"
+      />
+    </div>
+    <div class="menus-intro__slot menus-intro__slot--c">
+      <RoundPhoto src={wine} size="clamp(7rem, 4rem + 6vw, 12rem)" ring parallax={26} />
+    </div>
+    <div class="menus-intro__slot menus-intro__slot--d">
+      <RoundPhoto src={dessert} size="clamp(9rem, 5rem + 9vw, 17rem)" ring parallax={-14} />
+    </div>
+  </div>
+
+  <div class="menus-intro__content container">
+    <div class="menus-intro__copy">
+      <Eyebrow centered>Our menus</Eyebrow>
+      <h2 id="menus-intro-title" class="t-display-s" data-reveal="lines">
+        Something for every appetite
+      </h2>
+      <p class="t-body-m menus-intro__text" data-reveal="fade-up" data-reveal-delay="0.15">
+        From the first espresso to last call: market-fresh plates, wood-fired pizza and a weekend brunch worth
+        waking up for. Early birds, our mornings are warm, bright and very buttery.
+      </p>
+      <div data-reveal="fade-up" data-reveal-delay="0.25">
+        <Button href={url('/menu/')} tone="light">
+          Explore the menus
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .menus-intro {
+    position: relative;
+    min-height: clamp(52rem, 40rem + 28vw, 64rem);
+    display: grid;
+    align-items: center;
+    overflow: clip;
+  }
+
+  .menus-intro__ribbons {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .menus-intro__ribbons--mobile {
+    display: none;
+  }
+
+  .ribbon--mauve {
+    fill: var(--c-mauve);
+  }
+
+  .ribbon--deep {
+    fill: var(--c-deep);
+  }
+
+  .menus-intro__photos {
+    position: absolute;
+    inset: 0;
+  }
+
+  .menus-intro__slot {
+    position: absolute;
+  }
+
+  /* Big plate sits on the left ribbon's loop. */
+  .menus-intro__slot--a {
+    left: clamp(1rem, -1rem + 5vw, 6rem);
+    top: 11%;
+  }
+
+  .menus-intro__slot--b {
+    right: 11%;
+    top: 9%;
+  }
+
+  .menus-intro__slot--c {
+    left: 15%;
+    bottom: 9%;
+  }
+
+  .menus-intro__slot--d {
+    right: clamp(1rem, -1rem + 6vw, 7rem);
+    bottom: 10%;
+  }
+
+  .menus-intro__badge {
+    position: absolute;
+    right: -12%;
+    bottom: -6%;
+    z-index: 1;
+  }
+
+  .menus-intro__content {
+    position: relative;
+  }
+
+  .menus-intro__copy {
+    max-width: 40rem;
+    margin-inline: auto;
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: 1.6rem;
+  }
+
+  .menus-intro__text {
+    max-width: 30rem;
+  }
+
+  @media (max-width: 1100px) {
+    .menus-intro__slot--b {
+      right: 4%;
+    }
+    .menus-intro__slot--c {
+      left: 6%;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .menus-intro {
+      min-height: auto;
+      padding-block: 17rem 18rem;
+    }
+    .menus-intro__ribbons--desktop {
+      display: none;
+    }
+    .menus-intro__ribbons--mobile {
+      display: block;
+    }
+    .menus-intro__slot--a {
+      left: 6%;
+      top: 2.5rem;
+    }
+    .menus-intro__slot--b {
+      right: 6%;
+      top: 4rem;
+    }
+    .menus-intro__slot--c {
+      left: 8%;
+      bottom: 3rem;
+    }
+    .menus-intro__slot--d {
+      right: 5%;
+      bottom: 2.5rem;
+    }
+    .menus-intro__badge {
+      display: none;
+    }
+  }
+</style>

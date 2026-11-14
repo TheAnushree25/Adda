@@ -1,0 +1,82 @@
+/* ==========================================================================
+   Layout primitives: container, 12-column grid, sections, split lines.
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-pad);
+}
+
+.section--compact {
+  padding-block: var(--section-pad-compact);
+}
+
+.section--flush {
+  padding-block: 0;
+}
+
+.section--flush-bottom {
+  padding-bottom: 0;
+}
+
+.section--clip {
+  overflow: clip;
+}
+
+/* Section headers ---------------------------------------------------------- */
+.section-head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 1.5rem;
+  align-items: end;
+}
+
+.section-head__title {
+  grid-column: 1 / 7;
+}
+
+.section-head__aside {
+  grid-column: 9 / 13;
+}
+
+.section-head--center {
+  text-align: center;
+  justify-items: center;
+}
+
+.section-head--center > * {
+  grid-column: 3 / 11;
+}
+
+@media (max-width: 1000px) {
+  .section-head__title,
+  .section-head__aside {
+    grid-column: 1 / -1;
+  }
+
+  .section-head--center > * {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Masked lines produced by the text reveal (SplitText) ----------------------- */
+.split-line-mask {
+  display: block;
+  margin-block: -0.18em;
+  padding-block: 0.18em;
+  overflow: clip;
+}

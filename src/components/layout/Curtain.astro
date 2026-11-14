@@ -1,0 +1,47 @@
+---
+/** Page-transition curtain (animated by src/scripts/core/transitions.ts). */
+import Logo from '@components/ui/Logo.astro';
+---
+
+<div class="curtain" data-curtain aria-hidden="true">
+  <svg class="curtain__svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <path data-curtain-path d="M0 100 Q50 100 100 100 L100 100 L0 100 Z"></path>
+  </svg>
+  <div class="curtain__mark" data-curtain-mark>
+    <Logo />
+  </div>
+</div>
+
+<style>
+  .curtain {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-transition);
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .curtain:global(.is-active) {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .curtain__svg {
+    width: 100%;
+    height: 100%;
+  }
+  .curtain__svg path {
+    fill: var(--c-plum);
+  }
+  .curtain__mark {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--c-paper);
+    font-size: 1.6rem;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .curtain__mark :global(.logo) {
+    font-size: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+</style>

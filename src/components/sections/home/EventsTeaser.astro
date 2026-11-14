@@ -1,0 +1,84 @@
+---
+import EventCard from '@components/sections/shared/EventCard.astro';
+import Icon from '@components/ui/Icon.astro';
+import { events } from '@data/events';
+import { url } from '@lib/paths';
+---
+
+<section class="events-teaser theme-paper section" aria-labelledby="events-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="events-title" class="t-display-s section-head__title" data-reveal="lines">
+        Live nights &amp; guest sets
+      </h2>
+      <p class="t-accent-m section-head__aside" data-reveal="fade-up">
+        Music that keeps the room glowing — live bands every Friday, DJs every Saturday, and the odd surprise
+        in between.
+      </p>
+    </div>
+
+    <div class="events-teaser__carousel" data-module="carousel">
+      <div class="events-teaser__viewport" data-carousel-viewport>
+        <ul class="events-teaser__track" role="list">
+          {events.map((e) => (
+            <li class="events-teaser__slide">
+              <EventCard event={e} />
+            </li>
+          ))}
+        </ul>
+        <span class="drag-cursor t-label-s" data-carousel-cursor aria-hidden="true">
+          Drag
+        </span>
+      </div>
+
+      <div class="carousel-controls">
+        <button class="carousel-controls__btn" type="button" data-carousel-prev aria-label="Previous events">
+          <Icon name="arrow-left" size={18} />
+        </button>
+        <button class="carousel-controls__btn" type="button" data-carousel-next aria-label="Next events">
+          <Icon name="arrow-right" size={18} />
+        </button>
+        <a class="carousel-controls__all t-label-m" href={url('/events/')}>
+          See all dates
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .events-teaser .section-head {
+    margin-bottom: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  }
+
+  .events-teaser__carousel {
+    position: relative;
+  }
+
+  .events-teaser__viewport {
+    position: relative;
+    overflow: hidden;
+    margin-right: calc(var(--container-pad) * -1);
+    cursor: grab;
+  }
+  .events-teaser__viewport:active {
+    cursor: grabbing;
+  }
+
+  .events-teaser__track {
+    display: flex;
+    gap: var(--gutter);
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .events-teaser__slide {
+    flex: 0 0 clamp(17rem, 12rem + 15vw, 26rem);
+    min-width: 0;
+  }
+
+  @media (max-width: 700px) {
+    .events-teaser__slide {
+      flex-basis: 82%;
+    }
+  }
+</style>

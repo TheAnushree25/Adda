@@ -1,0 +1,64 @@
+/* Single-purpose helpers */
+.u-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.u-relative {
+  position: relative;
+}
+
+.u-center {
+  text-align: center;
+}
+
+.u-nowrap {
+  white-space: nowrap;
+}
+
+.u-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.u-img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Elements that only exist for motion: hidden from assistive tech, inert to pointer */
+.u-decor {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Initial states for scroll reveals. Only applied once JS has booted (html.js),
+   and released by a fallback animation if the bundle never runs. */
+.js [data-reveal]:not(.is-revealed) {
+  opacity: 0;
+  animation: reveal-fallback 0s linear 4s forwards;
+}
+
+.js.is-ready [data-reveal]:not(.is-revealed) {
+  animation: none;
+}
+
+@keyframes reveal-fallback {
+  to {
+    opacity: 1;
+  }
+}
+
+.reduced-motion [data-reveal] {
+  opacity: 1 !important;
+}

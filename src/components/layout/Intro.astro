@@ -1,0 +1,353 @@
+---
+/**
+ * First-visit intro: the café facade at night with every light off. The signs
+ * flicker on, the windows warm up row by row, the lamps glow, then the camera
+ * pushes in through the door and the site opens. Animated by
+ * src/scripts/modules/Intro.ts; shown once per session (see public/js/boot.js).
+ *
+ * Light regions are percentages of the facade image (1280 × 834).
+ */
+import { getImage } from 'astro:assets';
+import facade from '@assets/images/loader-facade.jpg';
+
+const image = await getImage({ src: facade, width: 1280, format: 'webp', quality: 84 });
+
+type Box = [number, number, number, number];
+type Region = { group: string; box?: Box; points?: [number, number][] };
+
+const rect = ([x1, y1, x2, y2]: Box) => `polygon(${x1}% ${y1}%, ${x2}% ${y1}%, ${x2}% ${y2}%, ${x1}% ${y2}%)`;
+const poly = (points: [number, number][]) => `polygon(${points.map(([x, y]) => `${x}% ${y}%`).join(', ')})`;
+const clipOf = (r: Region) => (r.points ? poly(r.points) : rect(r.box!));
+
+/** The main sign panel is drawn in perspective: higher on the right. */
+const signOutline: [number, number][] = [
+  [5.6, 21],
+  [92.2, 11.2],
+  [92.2, 26.4],
+  [5.6, 33.4],
+];
+
+const regions: Region[] = [
+  // Neighbouring shop and the café entrance.
+  { group: 'side', box: [0, 55, 2.6, 68] },
+  { group: 'entrance-sign', box: [77.1, 52.3, 94.6, 62] },
+  { group: 'entrance', box: [77.3, 62, 95, 81.4] },
+  // Main illuminated fascia.
+  { group: 'sign', points: signOutline },
+  // Restaurant floor windows, left to right.
+  { group: 'ground', box: [7.4, 34.1, 16.6, 51.6] },
+  { group: 'ground', box: [20.4, 32.3, 37.7, 51.6] },
+  { group: 'ground', box: [41.8, 30.9, 59.4, 51.4] },
+  { group: 'ground', box: [64.6, 28.7, 89, 51.1] },
+  // Pillars washed by the wall lamps.
+  { group: 'pillar', box: [2.3, 33.5, 7.4, 51.6] },
+  { group: 'pillar', box: [16.4, 33.5, 20.5, 51.6] },
+  { group: 'pillar', box: [37.6, 33.5, 41.8, 51.6] },
+  { group: 'pillar', box: [59.3, 29.4, 64.7, 51.4] },
+  { group: 'pillar', box: [89, 26.5, 95.5, 50.7] },
+  // Upper floor windows.
+  { group: 'top', box: [7.4, 5.7, 17.9, 20.2] },
+  { group: 'top', box: [26.5, 1.4, 39.5, 17.8] },
+  { group: 'top', box: [41.8, 0, 59.4, 16] },
+  { group: 'top', box: [71.4, 0, 85.6, 10.9] },
+];
+
+const sconces: [number, number][] = [
+  [4.5, 39.6],
+  [18, 39.6],
+  [39.4, 39],
+  [61.7, 37.2],
+  [92.4, 34.8],
+];
+
+const signClip = poly(signOutline);
+---
+
+<div class="intro" data-module="intro">
+  <div class="intro__stage" data-intro-stage>
+    <div class="intro__frame" data-intro-frame aria-hidden="true">
+      <img
+        class="intro__layer intro__base"
+        src={image.src}
+        width="1280"
+        height="834"
+        alt=""
+        decoding="async"
+        fetchpriority="high"
+        data-intro-image
+      />
+      <span class="intro__layer intro__night"></span>
+
+      {regions.map((r) => (
+        <div class="intro__layer intro__light" data-light={r.group} style={`clip-path:${clipOf(r)}`}>
+          <span class="intro__layer intro__blackout" />
+          <img
+            class="intro__layer intro__lit"
+            src={image.src}
+            width="1280"
+            height="834"
+            alt=""
+            decoding="async"
+          />
+        </div>
+      ))}
+
+      <div class="intro__layer intro__bloom" data-intro-bloom>
+        <div class="intro__layer" style={`clip-path:${signClip}`}>
+          <img class="intro__layer" src={image.src} width="1280" height="834" alt="" decoding="async" />
+        </div>
+      </div>
+
+      {sconces.map(([x, y]) => (
+        <span class="intro__sconce" style={`left:${x}%;top:${y}%`} data-sconce />
+      ))}
+
+      <img
+        class="intro__layer intro__full"
+        src={image.src}
+        width="1280"
+        height="834"
+        alt=""
+        decoding="async"
+        data-intro-full
+      />
+      <span class="intro__layer intro__glow" data-intro-glow></span>
+    </div>
+    <span class="intro__vignette" aria-hidden="true"></span>
+    <span class="intro__grain" aria-hidden="true"></span>
+  </div>
+
+  <div class="intro__ui" data-intro-ui>
+    <p class="intro__caption t-label-s" data-intro-caption>
+      The evening is about to begin
+    </p>
+    <span class="intro__progress" aria-hidden="true">
+      <span data-intro-progress></span>
+    </span>
+    <button class="intro__skip t-label-s" type="button" data-intro-skip>
+      Skip intro
+    </button>
+  </div>
+</div>
+
+<style>
+  .intro {
+    display: none;
+  }
+
+  :global(html.intro-active) {
+    overflow: hidden;
+  }
+
+  :global(html.intro-active) .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: block;
+    overflow: hidden;
+    background: #07060a;
+    color: var(--c-paper);
+    /* If the script never takes over, never trap the visitor behind the intro. */
+    animation: intro-failsafe 0.8s ease 14s forwards;
+  }
+
+  :global(html.intro-active) .intro:global(.is-running) {
+    animation: none;
+  }
+
+  @keyframes intro-failsafe {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .intro__stage {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The facade covers the viewport like object-fit: cover, keeping its aspect
+     ratio so the light regions (percentages) always line up. */
+  .intro__frame {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100vw, calc(100svh * 1280 / 834));
+    aspect-ratio: 1280 / 834;
+    translate: -50% -50%;
+    will-change: transform;
+  }
+
+  .intro__layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  img.intro__layer {
+    object-fit: cover;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Lights off: dark, cold and slightly desaturated. */
+  .intro__base {
+    filter: brightness(0.3) saturate(0.5) contrast(1.08);
+  }
+
+  .intro__night {
+    background: linear-gradient(
+      180deg,
+      rgb(16 20 46 / 0.62) 0%,
+      rgb(9 11 28 / 0.5) 55%,
+      rgb(4 5 14 / 0.72) 100%
+    );
+    mix-blend-mode: multiply;
+  }
+
+  .intro__light {
+    --on: 0;
+  }
+
+  .intro__blackout {
+    background: #06050a;
+    opacity: calc(0.74 * (1 - var(--on)));
+  }
+
+  .intro__lit {
+    opacity: var(--on);
+  }
+
+  .intro__bloom {
+    opacity: 0;
+    filter: blur(1.2vw) brightness(1.3) saturate(1.25);
+    mix-blend-mode: screen;
+  }
+
+  .intro__sconce {
+    position: absolute;
+    width: 7.5%;
+    aspect-ratio: 0.62;
+    translate: -50% -50%;
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      rgb(255 150 110 / 0.9) 0%,
+      rgb(255 96 72 / 0.38) 30%,
+      rgb(255 60 60 / 0) 66%
+    );
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+
+  .intro__full {
+    opacity: 0;
+  }
+
+  /* Warm wash used for the final push through the door. */
+  .intro__glow {
+    background: radial-gradient(
+      circle at var(--gx, 83%) var(--gy, 70%),
+      rgb(255 214 160 / 0.95),
+      rgb(255 170 110 / 0.45) 22%,
+      rgb(255 140 90 / 0) 55%
+    );
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+
+  .intro__vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 45%, transparent 45%, rgb(0 0 0 / 0.55) 100%);
+    pointer-events: none;
+  }
+
+  .intro__grain {
+    position: absolute;
+    inset: -50%;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.09;
+    pointer-events: none;
+    animation: intro-grain 0.6s steps(4) infinite;
+  }
+
+  @keyframes intro-grain {
+    0% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(-3%, 2%);
+    }
+    50% {
+      transform: translate(2%, -3%);
+    }
+    75% {
+      transform: translate(-2%, -1%);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+
+  /* Caption, progress and skip ------------------------------------------- */
+  .intro__ui {
+    position: absolute;
+    left: var(--container-pad);
+    right: var(--container-pad);
+    bottom: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+  }
+
+  .intro__caption {
+    letter-spacing: 0.22em;
+    opacity: 0.85;
+    white-space: nowrap;
+  }
+
+  .intro__progress {
+    position: relative;
+    height: 1px;
+    background: rgb(var(--c-paper-rgb) / 0.2);
+    overflow: hidden;
+  }
+
+  .intro__progress span {
+    position: absolute;
+    inset: 0;
+    background: var(--c-paper);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+  }
+
+  .intro__skip {
+    padding: 0.6rem 1rem;
+    border: 1px solid rgb(var(--c-paper-rgb) / 0.45);
+    border-radius: 999px;
+    letter-spacing: 0.16em;
+    transition:
+      background var(--dur-s) var(--ease-out),
+      color var(--dur-s) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .intro__skip:hover {
+      background: var(--c-paper);
+      color: var(--c-plum);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .intro__ui {
+      grid-template-columns: 1fr auto;
+    }
+    .intro__progress {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>

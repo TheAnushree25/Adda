@@ -1,0 +1,143 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Monogram from '@components/ui/Monogram.astro';
+import EventCard from '@components/sections/shared/EventCard.astro';
+import VisitCta from '@components/sections/home/VisitCta.astro';
+import { events, groupEventsByMonth } from '@data/events';
+import { wave } from '@lib/shapes';
+
+const months = groupEventsByMonth(events);
+const backWave = wave(4, 52, 20, 1.3);
+const frontWave = wave(10, 66, 16, 1.6);
+---
+
+<BaseLayout
+  title="Live Nights"
+  description="Live bands every Friday, DJs every Saturday: see who is playing at Mirabelle this month."
+  headerTheme="plum"
+  page="events"
+>
+  <section class="events-hero theme-plum" aria-labelledby="events-page-title">
+    <div class="events-hero__copy container">
+      <Eyebrow centered>Coming up soon</Eyebrow>
+      <h1 id="events-page-title" class="t-display-m" data-reveal="lines">
+        Live nights &amp; guest sets
+      </h1>
+      <p class="t-body-m" data-reveal="fade-up" data-reveal-delay="0.15">
+        Every week, a line-up that keeps the room glowing: DJs from 9 pm on Saturdays and live bands from 9:30
+        pm on Fridays. Free entry — tables for dinner guests are held until 9.
+      </p>
+    </div>
+    <div class="events-hero__waves u-decor" aria-hidden="true">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d={backWave} fill="var(--c-blush)" data-parallax="-6"></path>
+        <path d={frontWave} fill="var(--c-paper)"></path>
+      </svg>
+      <div class="events-hero__badge">
+        <Monogram size="clamp(6rem, 4rem + 5vw, 10rem)" />
+      </div>
+    </div>
+  </section>
+
+  <section class="events-list theme-paper section" aria-label="Upcoming events">
+    <div class="container">
+      {months.map((group) => (
+        <div class="events-month">
+          <h2 class="events-month__title t-display-s">
+            <span data-reveal="lines">{group.month}</span>
+            <span class="events-month__rule" aria-hidden="true" />
+          </h2>
+          <ul class="events-month__grid" role="list" data-reveal="stagger">
+            {group.items.map((e) => (
+              <li data-reveal-child>
+                <EventCard event={e} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <VisitCta />
+</BaseLayout>
+
+<style>
+  .events-hero {
+    position: relative;
+    padding-top: calc(var(--header-h) + clamp(2rem, 1rem + 3vw, 4.5rem));
+    overflow: clip;
+  }
+
+  .events-hero__copy {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .events-hero__copy p {
+    max-width: 34rem;
+  }
+
+  .events-hero__waves {
+    position: relative;
+    height: clamp(12rem, 8rem + 14vw, 22rem);
+    margin-top: -2rem;
+  }
+
+  .events-hero__waves svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .events-hero__badge {
+    position: absolute;
+    right: 12%;
+    top: 4%;
+  }
+
+  .events-month + .events-month {
+    margin-top: clamp(4rem, 3rem + 4vw, 7rem);
+  }
+
+  .events-month__title {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .events-month__rule {
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .events-month__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gutter);
+  }
+
+  @media (max-width: 1000px) {
+    .events-month__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .events-month__grid {
+      grid-template-columns: 1fr;
+    }
+    .events-hero__badge {
+      right: 4%;
+      top: -10%;
+    }
+  }
+</style>

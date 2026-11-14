@@ -1,0 +1,100 @@
+---
+import { Image } from 'astro:assets';
+import { type LiveEvent, formatEventDay } from '@data/events';
+
+interface Props {
+  event: LiveEvent;
+  class?: string;
+}
+
+const { event, class: className } = Astro.props;
+---
+
+<article class:list={['event-card', className]}>
+  <header class="event-card__head">
+    <h3 class="t-headline-s event-card__artist">{event.artist}</h3>
+    <p class="t-label-m">{event.genre}</p>
+  </header>
+  <div class="event-card__media">
+    <Image
+      src={event.image}
+      alt={event.alt}
+      widths={[400, 640, 900]}
+      sizes="(max-width: 700px) 85vw, (max-width: 1200px) 45vw, 26rem"
+      class="event-card__img"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <dl class="event-card__meta">
+    <div>
+      <dt class="t-label-s">Date</dt>
+      <dd class="t-label-m">
+        <time datetime={event.date}>{formatEventDay(event.date)}</time>
+      </dd>
+    </div>
+    <div>
+      <dt class="t-label-s">Time</dt>
+      <dd class="t-label-m">{event.time}</dd>
+    </div>
+  </dl>
+</article>
+
+<style>
+  .event-card {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    border: 1px solid var(--c-plum);
+    color: var(--c-plum);
+    background: var(--c-paper);
+    user-select: none;
+  }
+
+  .event-card__head {
+    min-height: 8rem;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.6rem;
+    padding: 1.6rem 1.25rem;
+    text-align: center;
+  }
+
+  .event-card__media {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+  }
+
+  .event-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    .event-card:hover .event-card__img {
+      transform: scale(1.06);
+    }
+  }
+
+  .event-card__meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-block: 1.5rem;
+  }
+
+  .event-card__meta > div {
+    display: grid;
+    gap: 0.4rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .event-card__meta > div + div {
+    border-left: 1px solid var(--c-plum);
+  }
+</style>

@@ -1,0 +1,129 @@
+---
+/** Weekly opening hours with a day switcher (JS picks today in the café's time zone). */
+import { services, weekdayNames, type Weekday } from '@data/hours';
+import { formatTime } from '@scripts/utils/hours';
+import Icon from '@components/ui/Icon.astro';
+
+const days = [1, 2, 3, 4, 5, 6, 0] as Weekday[];
+---
+
+<div class="hours" data-module="schedule">
+  <div class="hours__top">
+    <span class="hours__rule" aria-hidden="true"></span>
+    <Icon name="clock" size={18} />
+    <span class="hours__rule" aria-hidden="true"></span>
+  </div>
+  <p class="t-label-s hours__kicker">Opening hours</p>
+  <div class="hours__switch">
+    <button class="hours__arrow" type="button" data-schedule-prev aria-label="Previous day">
+      <Icon name="arrow-left" size={18} />
+    </button>
+    <p class="hours__day t-headline-m" data-schedule-label aria-live="polite">
+      Monday
+    </p>
+    <button class="hours__arrow" type="button" data-schedule-next aria-label="Next day">
+      <Icon name="arrow-right" size={18} />
+    </button>
+  </div>
+
+  {days.map((d, i) => (
+    <ul
+      class="hours__list"
+      role="list"
+      data-schedule-day={d}
+      data-day-name={weekdayNames[d]}
+      hidden={i !== 0}
+    >
+      {services.map((s) => {
+        const h = s.days[d];
+        return (
+          <li class="hours__row t-body-s">
+            <span>{s.label}</span>
+            <span class="hours__time">{h ? `${formatTime(h[0])} – ${formatTime(h[1])}` : 'Closed'}</span>
+          </li>
+        );
+      })}
+    </ul>
+  ))}
+
+  <p class="t-label-s hours__note">Holiday hours may vary — check our socials before you visit.</p>
+</div>
+
+<style>
+  .hours {
+    background: var(--c-paper);
+    color: var(--c-plum);
+    padding: 2rem 2rem 1.75rem;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .hours__top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hours__rule {
+    flex: 1;
+    height: 4px;
+    border-block: 1px solid currentColor;
+  }
+
+  .hours__kicker {
+    text-align: center;
+  }
+
+  .hours__switch {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .hours__day {
+    text-align: center;
+    font-style: italic;
+  }
+
+  .hours__arrow {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    transition:
+      background var(--dur-s) var(--ease-out),
+      color var(--dur-s) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .hours__arrow:hover {
+      background: var(--c-plum);
+      color: var(--c-paper);
+    }
+  }
+
+  .hours__list {
+    display: grid;
+  }
+
+  .hours__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.55rem;
+    border-bottom: 1px solid rgb(var(--c-plum-rgb) / 0.18);
+  }
+
+  .hours__time {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .hours__note {
+    margin-top: 0.6rem;
+    text-align: center;
+    max-width: 22rem;
+    justify-self: center;
+  }
+</style>

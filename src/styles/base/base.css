@@ -1,0 +1,94 @@
+/* Document-level styles */
+html {
+  background-color: var(--c-paper);
+  color: var(--c-plum);
+  scrollbar-color: var(--c-plum) var(--c-paper);
+}
+
+body {
+  font-family: var(--f-sans);
+  font-size: var(--fs-body-m);
+  font-weight: 450;
+  background-color: var(--c-paper);
+  color: var(--c-plum);
+  overflow-x: clip;
+}
+
+::selection {
+  background-color: var(--c-plum);
+  color: var(--c-paper);
+}
+
+.theme-plum ::selection,
+.theme-deep ::selection {
+  background-color: var(--c-paper);
+  color: var(--c-plum);
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Lenis smooth scrolling */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Page shell */
+.site-main {
+  position: relative;
+  z-index: var(--z-content);
+  display: block;
+}
+
+/* Skip link */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: calc(var(--z-transition) + 1);
+  padding: 0.75rem 1.25rem;
+  background: var(--c-ink);
+  color: var(--c-paper);
+  font-weight: 700;
+  transform: translateY(-200%);
+  transition: transform var(--dur-s) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* While a page transition runs, block stray clicks */
+html.is-changing {
+  cursor: progress;
+}
+
+html.is-changing .site-main {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

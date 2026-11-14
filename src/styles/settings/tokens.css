@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Design tokens — single source of truth for colour, type, space and motion.
+   Fluid values interpolate between a 375px and a 1440px viewport.
+   ========================================================================== */
+
+:root {
+  /* ---- Palette (from the brand Figma file) --------------------------------- */
+  --c-plum: #4b2b32; /* primary dark surface, headings on light */
+  --c-plum-rgb: 75 43 50;
+  --c-deep: #321c22; /* deepest plum: footer, story, depth */
+  --c-deep-rgb: 50 28 34;
+  --c-mauve: #7a4a54; /* organic shapes, secondary surface */
+  --c-mauve-rgb: 122 74 84;
+  --c-blush: #d9c4c8; /* soft accent */
+  --c-paper: #f7f6f4; /* light surface, text on dark */
+  --c-paper-rgb: 247 246 244;
+  --c-ink: #46181a; /* maroon ink for illustration-like details */
+  --c-white: #fff;
+
+  /* Default surface (overridden per section with .theme-*) */
+  --surface: var(--c-paper);
+  --on-surface: var(--c-plum);
+  --accent: var(--c-plum);
+  --on-accent: var(--c-paper);
+  --rule: var(--c-plum);
+
+  /* ---- Typography ------------------------------------------------------- */
+  --f-display: 'Fraunces Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --f-accent: 'Newsreader Variable', 'Iowan Old Style', Georgia, serif;
+  --f-sans: 'Nunito Variable', ui-rounded, 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --fs-display-l: clamp(3.5rem, 2.444rem + 4.507vw, 6.5rem);
+  --fs-display-m: clamp(2.5rem, 1.6197rem + 3.7559vw, 5rem);
+  --fs-display-s: clamp(2.5rem, 1.9718rem + 2.2535vw, 4rem);
+  --fs-headline-l: clamp(2rem, 1.6479rem + 1.5023vw, 3rem);
+  --fs-headline-m: clamp(1.5rem, 1.1479rem + 1.5023vw, 2.5rem);
+  --fs-headline-s: clamp(1.5rem, 1.324rem + 0.7512vw, 2rem);
+  --fs-accent-l: clamp(1.25rem, 0.9859rem + 1.1268vw, 2rem);
+  --fs-title-m: clamp(1.25rem, 1.162rem + 0.3756vw, 1.5rem);
+  --fs-label-l: 1.125rem;
+  --fs-label-m: 0.875rem;
+  --fs-label-s: 0.6875rem;
+  --fs-body-l: 1.25rem;
+  --fs-body-m: 1rem;
+  --fs-body-s: 0.875rem;
+
+  /* Fraunces axes for headings: high optical size, crisp (not soft) */
+  --display-axes: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+
+  /* ---- Space ------------------------------------------------------------ */
+  --container-max: 120rem;
+  --container-pad: clamp(2rem, 1.2958rem + 3.0047vw, 4rem);
+  --gutter: 2rem;
+  --section-pad: clamp(4rem, 2.5916rem + 6.0094vw, 8rem);
+  --section-pad-compact: 4rem;
+  --header-banner-h: 2.75rem;
+  --header-inner-h: clamp(4rem, 2.944rem + 4.507vw, 7rem);
+  --header-h: calc(var(--header-banner-h) + var(--header-inner-h));
+  --btn-h: 3rem;
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-xs: 0.2s;
+  --dur-s: 0.3s;
+  --dur-m: 0.4s;
+  --dur-l: 0.6s;
+
+  /* ---- Layers ----------------------------------------------------------- */
+  --z-content: 1;
+  --z-overlay: 40;
+  --z-nav: 50;
+  --z-header: 60;
+  --z-menu: 70;
+  --z-sheet: 80;
+  --z-transition: 100;
+}
+
+@media (max-width: 1000px) {
+  :root {
+    --gutter: 1rem;
+  }
+}
+
+/* ---- Section themes -------------------------------------------------------
+   Each theme sets the surface colour and what reads on top of it. */
+.theme-paper {
+  --surface: var(--c-paper);
+  --on-surface: var(--c-plum);
+  --accent: var(--c-plum);
+  --on-accent: var(--c-paper);
+  --rule: var(--c-plum);
+}
+.theme-plum {
+  --surface: var(--c-plum);
+  --on-surface: var(--c-paper);
+  --accent: var(--c-paper);
+  --on-accent: var(--c-plum);
+  --rule: var(--c-paper);
+}
+.theme-deep {
+  --surface: var(--c-deep);
+  --on-surface: var(--c-paper);
+  --accent: var(--c-paper);
+  --on-accent: var(--c-deep);
+  --rule: var(--c-paper);
+}
+.theme-mauve {
+  --surface: var(--c-mauve);
+  --on-surface: var(--c-paper);
+  --accent: var(--c-paper);
+  --on-accent: var(--c-plum);
+  --rule: var(--c-paper);
+}
+.theme-blush {
+  --surface: var(--c-blush);
+  --on-surface: var(--c-plum);
+  --accent: var(--c-plum);
+  --on-accent: var(--c-blush);
+  --rule: var(--c-plum);
+}
+
+[class*='theme-'] {
+  background-color: var(--surface);
+  color: var(--on-surface);
+}

@@ -1,0 +1,73 @@
+---
+import { site, footerNav } from '@data/site';
+import Button from '@components/ui/Button.astro';
+---
+
+<div id="mobile-menu" class="mobile-menu theme-plum" hidden>
+  <div class="mobile-menu__inner container">
+    <nav aria-label="Mobile">
+      <ul class="mobile-menu__list" role="list">
+        {footerNav.map((l) => (
+          <li class="mobile-menu__item">
+            <a class="mobile-menu__link t-display-s" href={l.href} data-nav-link data-menu-item>
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="mobile-menu__footer" data-menu-item>
+      <Button href="#" variant="solid" data-sheet-open="sheet-book">
+        Book a table
+      </Button>
+      <a class="t-label-m" href={site.phone.href}>
+        {site.phone.display}
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-menu);
+    padding-top: calc(var(--header-h) + 2rem);
+    overflow-y: auto;
+  }
+
+  .mobile-menu__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    padding-bottom: 7rem;
+    gap: 3rem;
+  }
+
+  .mobile-menu__item {
+    overflow: hidden;
+    border-bottom: 1px solid rgb(var(--c-paper-rgb) / 0.3);
+  }
+
+  .mobile-menu__link {
+    display: block;
+    padding-block: 0.9rem 0.7rem;
+  }
+  .mobile-menu__link[aria-current='page'] {
+    font-style: italic;
+  }
+
+  .mobile-menu__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1001px) {
+    .mobile-menu {
+      display: none !important;
+    }
+  }
+</style>

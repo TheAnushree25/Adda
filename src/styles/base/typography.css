@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Type scale. Display/headline = Fraunces, accent = Newsreader italic,
+   labels/body = Nunito.
+   ========================================================================== */
+
+.t-display-l,
+.t-display-m,
+.t-display-s,
+.t-headline-l,
+.t-headline-m,
+.t-headline-s,
+.t-title-m {
+  font-family: var(--f-display);
+  font-weight: 560;
+  font-variation-settings: var(--display-axes);
+  line-height: 1;
+  letter-spacing: -0.012em;
+  text-transform: none;
+}
+
+.t-display-l {
+  font-size: var(--fs-display-l);
+  line-height: 0.96;
+}
+.t-display-m {
+  font-size: var(--fs-display-m);
+}
+.t-display-s {
+  font-size: var(--fs-display-s);
+}
+.t-headline-l {
+  font-size: var(--fs-headline-l);
+}
+.t-headline-m {
+  font-size: var(--fs-headline-m);
+}
+.t-headline-s {
+  font-size: var(--fs-headline-s);
+}
+.t-title-m {
+  font-size: var(--fs-title-m);
+}
+
+.t-accent-l,
+.t-accent-m {
+  font-family: var(--f-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 72;
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+}
+.t-accent-l {
+  font-size: var(--fs-accent-l);
+}
+.t-accent-m {
+  font-size: var(--fs-title-m);
+}
+
+.t-label-l,
+.t-label-m,
+.t-label-s {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+.t-label-l {
+  font-size: var(--fs-label-l);
+  line-height: 1.35;
+}
+.t-label-m {
+  font-size: var(--fs-label-m);
+  line-height: 1.15;
+}
+.t-label-s {
+  font-size: var(--fs-label-s);
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+}
+
+.t-body-l,
+.t-body-m,
+.t-body-s {
+  font-family: var(--f-sans);
+  font-weight: 450;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.t-body-l {
+  font-size: var(--fs-body-l);
+  line-height: 1.4;
+}
+.t-body-m {
+  font-size: var(--fs-body-m);
+  line-height: 1.5;
+}
+.t-body-s {
+  font-size: var(--fs-body-s);
+  line-height: 1.45;
+}
+
+/* Rich text blocks (privacy page, descriptions) */
+.prose {
+  max-width: 44rem;
+}
+.prose > * + * {
+  margin-top: 1em;
+}
+.prose h2 {
+  font-family: var(--f-display);
+  font-variation-settings: var(--display-axes);
+  font-weight: 560;
+  font-size: var(--fs-headline-m);
+  line-height: 1.05;
+  margin-top: 1.6em;
+}
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.prose ul {
+  padding-left: 1.2em;
+}
